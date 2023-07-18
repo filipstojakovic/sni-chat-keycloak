@@ -1,0 +1,20 @@
+spring:
+#  datasource:
+#    username: root
+#    password: root
+#    url: jdbc:mysql://localhost/sni-chat?createDatabaseIfNotExist=true
+  jpa:
+    show-sql: false
+  application:
+    name: "backend"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${ISSUER_URL:http://localhost:9000/realms/my-realm}
+logging:
+  level:
+    org:
+      springframework:
+        security: trace
+#    root: trace
