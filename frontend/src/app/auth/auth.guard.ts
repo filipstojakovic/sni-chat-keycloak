@@ -27,7 +27,6 @@ export class AuthGuard extends KeycloakAuthGuard {
     if (!authenticated) {
       await this.keycloak.login({
         redirectUri: window.location.origin + state.url,
-        // redirectUri: environment.home + state.url,
       });
     }
 

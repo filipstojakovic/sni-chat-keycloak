@@ -8,7 +8,10 @@ import {HttpClient} from '@angular/common/http';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  token: string = "token";
+  res: string = "res";
+  res1: string = "res";
+
+  token2:string = "auth server";
 
 
   constructor(private authService: AuthService,
@@ -16,13 +19,24 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.token2 = this.authService.getToken();
     this.http.get("/api/test",{responseType: 'text'}).subscribe({
           next: (res) => {
             console.log("home.component.ts > next(): "+ JSON.stringify(res, null, 2));
-            this.token = JSON.stringify(res);
+            this.res = JSON.stringify(res);
           },
           error: (err) => {
-            console.log("home.component.ts > error(): "+ err.message);
+            console.log("error(): res: "+ err.message);
+          },
+        },
+    )
+    this.http.get("/api1/test",{responseType: 'text'}).subscribe({
+          next: (res) => {
+            console.log("home.component.ts > next(): "+ JSON.stringify(res, null, 2));
+            this.res1 = JSON.stringify(res);
+          },
+          error: (err) => {
+            console.log("error(): res1: "+ err.message);
           },
         },
     )

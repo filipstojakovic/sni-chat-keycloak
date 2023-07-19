@@ -13,18 +13,13 @@ public class GatewayConfig {
     return rlb
         .routes()
         .route("default-route", r -> r
-            .path("/**")
-//             .filters(rs -> rs.tokenRelay())
+            .path("/api/**")
             .uri("http://localhost:8080"))
+        .route("default-route_1", r -> r
+            .path("/api1/**")
+            .filters(f -> f.rewritePath("^/api1", "/api"))
+            .uri("http://localhost:8081"))
         .build();
-//         .route(rs -> rs
-//             .path("/auth")
-//             .filters(GatewayFilterSpec::tokenRelay)
-//             .uri("http://localhost:8081")) // resource server uri
-//         .route("forward_route", r -> r.path("/**")
-//             .filters(GatewayFilterSpec::tokenRelay)
-//             .uri("http://localhost:8081"))
-//         .build();
   }
 
 }

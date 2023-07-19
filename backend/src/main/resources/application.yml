@@ -12,17 +12,19 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${ISSUER_URL:http://localhost:9000/realms/my-realm}
+
 logging:
   level:
     org:
       springframework:
         security: trace
-#    root: trace
+    root: debug
 
-#server:
-#  port: 8443
-#  ssl:
-#    enabled: false
+
+server:
+  port: 8080
+  ssl:
+    enabled: false
 #    key-alias: localhost
 #    key-store: classpath:server.jks
 #    key-store-type: jks
@@ -30,3 +32,5 @@ logging:
 #    key-password: password
 #    trust-store: classpath:server.jks
 #    trust-store-password: password
+#    certificate: classpath:localhostcrt.pem
+#    certificate-private-key: classpath:localhostkey.pem

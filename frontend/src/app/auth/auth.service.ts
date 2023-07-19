@@ -25,7 +25,7 @@ export class AuthService {
     this.keycloak.logout("http://localhost:4200/").then();
   }
 
-  login() {
+  public login() {
     this.keycloak.login({ redirectUri: "http://localhost:4200/secured" }).then();
   }
 
