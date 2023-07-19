@@ -18,3 +18,13 @@ logging:
       springframework:
         security: trace
 #    root: trace
+
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    key-alias: localhost
+    key-store: classpath:server.jks
+    key-store-type: jks
+    key-store-password: password
+    key-password: password
