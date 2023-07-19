@@ -1,0 +1,16 @@
+server:
+    port: 5000
+logging:
+  level:
+    root: info
+    org:
+      springframework:
+        security: trace
+
+#spring:
+#  security:
+#    oauth2:
+#      client:
+#        provider:
+#          spring:
+#            issuer-uri: http://localhost:9000
