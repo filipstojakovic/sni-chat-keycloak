@@ -17,3 +17,21 @@ server:
     key-store-password: password
     key-password: password
 ```
+
+### Creating Self-Signed SSL Certificate without Prompt
+```console
+openssl req -newkey rsa:2048 \
+            -x509 \
+            -sha256 \
+            -days 3650 \
+            -nodes \
+            -out example.crt \
+            -keyout example.key \
+            -subj "/C=SI/ST=Ljubljana/L=Ljubljana/O=Security/OU=IT Department/CN=www.example.com"
+```
+
+Add certificate to keystore:
+
+```console
+keytool -import -file .\cert.crt -keystore .\server.jks -alias filip
+```

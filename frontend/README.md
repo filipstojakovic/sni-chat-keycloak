@@ -66,3 +66,5 @@ And then you can run (or add --ssl argument to npm run in package.json):
 or add --ssl argument to npm start command in package.json
 
     "start": "ng serve -ssl",
+
+--ssl true --ssl-cert cert.crt --ssl-key cert.key

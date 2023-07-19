@@ -19,12 +19,14 @@ logging:
         security: trace
 #    root: trace
 
-server:
-  port: 8443
-  ssl:
-    enabled: true
-    key-alias: localhost
-    key-store: classpath:server.jks
-    key-store-type: jks
-    key-store-password: password
-    key-password: password
+#server:
+#  port: 8443
+#  ssl:
+#    enabled: false
+#    key-alias: localhost
+#    key-store: classpath:server.jks
+#    key-store-type: jks
+#    key-store-password: password
+#    key-password: password
+#    trust-store: classpath:server.jks
+#    trust-store-password: password

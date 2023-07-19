@@ -1,6 +1,5 @@
 package net.etfbl.backend.config;
 
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
 
@@ -38,7 +36,7 @@ public class SecurityConfig {
             configuration.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.OPTIONS.name(), HttpMethod.DELETE.name()));
             configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
             configuration.setAllowCredentials(true);
-            configuration.setMaxAge(3600L);
+            configuration.setMaxAge(5600L);
             return configuration;
           });
         })

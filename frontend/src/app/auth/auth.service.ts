@@ -2,11 +2,6 @@ import {inject, Injectable} from '@angular/core';
 import {KeycloakService} from 'keycloak-angular';
 import {from, Observable} from 'rxjs';
 
-export interface AuthConfig {
-  redirectUrlLogin: string;
-  redirectUrlLogout: string;
-}
-
 @Injectable({
   providedIn: 'root',
 })
