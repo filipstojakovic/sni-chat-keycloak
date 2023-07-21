@@ -1,5 +1,6 @@
 package net.etfbl.backend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -8,23 +9,22 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.List;
 
 @Configuration
+@RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig {
 
   private final ErrorHandler errorHandler;
-
-  public SecurityConfig(final ErrorHandler errorHandler) {
-    this.errorHandler = errorHandler;
-  }
 
   @Bean
   protected SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
@@ -32,7 +32,7 @@ public class SecurityConfig {
     http.cors(c -> {
           c.configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(List.of("http://localhost:4200","https://localhost:4200"));
+            configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://localhost:4200"));
             configuration.setAllowedMethods(List.of(HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.OPTIONS.name(), HttpMethod.DELETE.name()));
             configuration.setExposedHeaders(List.of(CorsConfiguration.ALL));
             configuration.setAllowCredentials(true);
@@ -41,7 +41,12 @@ public class SecurityConfig {
           });
         })
         .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(r -> r.anyRequest().authenticated())
+        .authorizeHttpRequests(r -> {
+              r.requestMatchers("/api/ws/**").permitAll();
+              r.anyRequest().authenticated();
+            }
+        )
+        .headers(header-> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
         .exceptionHandling(e -> e.authenticationEntryPoint(errorHandler))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .oauth2ResourceServer(

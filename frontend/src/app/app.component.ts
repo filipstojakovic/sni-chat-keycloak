@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {frontendPath} from './constants/frontendPath';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,5 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'frontend';
+  protected readonly frontendPath = frontendPath;
 }

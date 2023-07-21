@@ -18,7 +18,7 @@ logging:
     org:
       springframework:
         security: trace
-    root: debug
+    root: info
 
 
 server:
