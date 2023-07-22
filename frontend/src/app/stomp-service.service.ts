@@ -11,11 +11,10 @@ export class StompServiceService {
   private readonly socket;
   private stompClient;
 
-  constructor(private auth:AuthService) {
-    this.socket = new SockJS("http://localhost:8080/api/ws");
+  constructor(private auth: AuthService) {
+    this.socket = new SockJS("https://localhost:8080/api/ws");
     this.stompClient = Stomp.over(this.socket);
     // this.stompClient.debug = null //TODO: disable logs
-
   }
 
   subscribe(topic: string, callback: any): void {
@@ -37,7 +36,7 @@ export class StompServiceService {
     })
   }
 
-  sendMessage(chatMessage: string) {
-    this.stompClient.send("/api/message", {}, chatMessage);
+  sendMessage(to:string, chatMessage: string) {
+    this.stompClient.send(to, {}, chatMessage);
   }
 }

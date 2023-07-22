@@ -1,6 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {KeycloakService} from 'keycloak-angular';
-import {Subscription} from 'rxjs';
+import {Component, OnInit} from '@angular/core';
 import {StompServiceService} from '../../stomp-service.service';
 
 class UserData {
@@ -32,20 +30,22 @@ export class ChatRoomComponent implements OnInit {
   messageToSend: string = "ovo je neki test";
   receivedMessages: Message[] = [];
 
-  constructor(private stompService: StompServiceService) { }
+  constructor(private stompService: StompServiceService) {
+  }
 
   ngOnInit() {
-    this.stompService.subscribe("/chatroom/public",(payload)=>{
-      console.log("chat-room.component.ts > (): "+ "something happend");
+    this.stompService.subscribe("/chatroom/public", (payload) => {
+      console.log("chat-room.component.ts > (): " + "something happend");
 
       var payloadData = JSON.parse(payload.body);
-      console.log("chat-room.component.ts > (): "+ JSON.stringify(payloadData, null, 2));
+      console.log("chat-room.component.ts > (): " + JSON.stringify(payloadData, null, 2));
     })
   }
 
   sendMessage() {
     const message: Message = { message: this.messageToSend };
-    this.stompService.sendMessage(JSON.stringify(message));
+    this.stompService.sendMessage("/api/message", JSON.stringify(message));
     this.messageToSend = '';
   }
+
 }

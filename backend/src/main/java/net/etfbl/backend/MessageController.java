@@ -17,8 +17,8 @@ public class MessageController {
 
   private final SimpMessagingTemplate simpMessagingTemplate;
 
-  @MessageMapping("/message")
-  @SendTo("/chatroom/public")
+  @MessageMapping("/chat.sendMessage")
+  @SendTo("/topic/javainuse")
   public MyMessage receiveMessage(@Payload MyMessage myMessage){
     log.info("OVO JE ZNAK DA SE VRACA PORUKA: receiveMessage(@Payload Message message){ ");
     myMessage.setMessage("OVO JE OD SERVERA");

@@ -20,17 +20,26 @@ logging:
         security: trace
     root: info
 
+app:
+  rabbitmq:
+    enable: false
+    relayHost: localhost
+    relayPort: 61613
+    clientLogin: guest
+    clientPasscode: guest
+  cors:
+    allowedOrigins: http://localhost:4200, https://localhost:4200, http://localhost:9000, https://localhost:9001
 
 server:
   port: 8080
   ssl:
-    enabled: false
-#    key-alias: localhost
-#    key-store: classpath:server.jks
-#    key-store-type: jks
-#    key-store-password: password
-#    key-password: password
-#    trust-store: classpath:server.jks
-#    trust-store-password: password
+    enabled: true
+    key-alias: localhost
+    key-store: classpath:server.jks
+    key-store-type: jks
+    key-store-password: password
+    key-password: password
+    trust-store: classpath:server.jks
+    trust-store-password: password
 #    certificate: classpath:localhostcrt.pem
 #    certificate-private-key: classpath:localhostkey.pem
