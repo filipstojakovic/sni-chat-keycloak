@@ -13,6 +13,7 @@
 export = SockJS;
 export as namespace SockJS;
 
+
 declare const SockJS: {
   new (url: string, _reserved?: any, options?: SockJS.Options): WebSocket;
   (url: string, _reserved?: any, options?: SockJS.Options): WebSocket;

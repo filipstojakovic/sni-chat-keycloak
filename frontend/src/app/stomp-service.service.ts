@@ -12,6 +12,7 @@ export class StompServiceService {
   private stompClient;
 
   constructor(private auth: AuthService) {
+
     this.socket = new SockJS("https://localhost:8080/api/ws");
     this.stompClient = Stomp.over(this.socket);
     // this.stompClient.debug = null //TODO: disable logs
@@ -23,6 +24,7 @@ export class StompServiceService {
       this.subscribeToTopic(topic, callback);
       return;
     }
+    console.log("subscribe(): " + "**** NOT CONNECTED ****");
 
     // if stomp client is not connected
     this.stompClient.connect({}, (): any => {
@@ -36,7 +38,13 @@ export class StompServiceService {
     })
   }
 
-  sendMessage(to:string, chatMessage: string) {
+  sendMessage(to: string, chatMessage: string) {
     this.stompClient.send(to, {}, chatMessage);
+  }
+
+  connect() {
+    this.stompClient.connect("", (): any => {
+      console.log("stomp-service.service.ts > connect(): " + "empty connect");
+    })
   }
 }
