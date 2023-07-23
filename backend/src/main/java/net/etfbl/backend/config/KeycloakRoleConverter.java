@@ -22,8 +22,6 @@ public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedA
   @Override
   public Collection<GrantedAuthority> convert(final Jwt jwt) {
 
-    logger.info("subject: \n" + jwt.getSubject());
-
     final Map<String, Object> claims = jwt.getClaims();
 
     final Map<String, Map<String, List<String>>> resourceAccess =

@@ -6,8 +6,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -17,11 +17,17 @@ public class MessageController {
 
   private final SimpMessagingTemplate simpMessagingTemplate;
 
+  /**
+   *  https://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-handle-annotations
+   */
   @MessageMapping("/message")
   @SendTo("/chatroom/public")
-  public MyMessage receiveMessage(@Payload MyMessage myMessage){
+  public MyMessage receiveMessage(@Payload MyMessage myMessage,
+                                  StompHeaderAccessor headers,
+                                  JwtAuthenticationToken principal) {
     log.info("OVO JE ZNAK DA SE VRACA PORUKA: receiveMessage(@Payload Message message){ ");
-    myMessage.setMessage("OVO JE OD SERVERA");
+    String name = (String) JwtUtil.getClaim(principal,JwtUtil.USERNAME);
+    myMessage.setMessage("OVO JE PORUKA OD SERVERA BURAZ");
     return myMessage;
   }
 
