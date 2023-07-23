@@ -28,7 +28,7 @@ public class SecurityConfig {
     http.cors(c -> c.configurationSource(corsConfigurationSource))
         .csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(r -> {
-              r.requestMatchers("/favicon.ico", "/api/ws/**").permitAll();
+              r.requestMatchers("/favicon.ico", "/api/ws/**", "/error").permitAll();
               r.anyRequest().authenticated();
             }
         )

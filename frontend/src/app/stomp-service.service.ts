@@ -13,7 +13,9 @@ export class StompServiceService {
 
   constructor(private auth: AuthService) {
 
-    this.socket = new SockJS("https://localhost:8080/api/ws");
+    const token = auth.getToken();
+    let url = "https://localhost:8080/api/ws";
+    this.socket = new SockJS(url);
     this.stompClient = Stomp.over(this.socket);
     // this.stompClient.debug = null //TODO: disable logs
   }
@@ -21,13 +23,14 @@ export class StompServiceService {
   subscribe(topic: string, callback: any): void {
     const connected: boolean = this.stompClient.connected;
     if (connected) {
+      console.warn("ALREADY CONNECTED");
       this.subscribeToTopic(topic, callback);
       return;
     }
-    console.log("subscribe(): " + "**** NOT CONNECTED ****");
-
     // if stomp client is not connected
-    this.stompClient.connect({}, (): any => {
+    this.stompClient.connect({
+      "X-Authorization": this.auth.getToken()
+    }, (): any => {
       this.subscribeToTopic(topic, callback);
     })
   }

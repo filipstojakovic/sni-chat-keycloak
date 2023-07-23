@@ -21,15 +21,6 @@ export class AuthService {
     return this.keycloak.getKeycloakInstance()?.token as string;
   }
 
-  public logout(): void {
-    this.keycloak.logout("http://localhost:4200/").then();
-  }
-
-  public login() {
-    this.keycloak.login({ redirectUri: "http://localhost:4200/secured" }).then();
-  }
-
-
   isLoggedIn(): Promise<boolean> {
     return this.keycloak.isLoggedIn();
   }
@@ -52,5 +43,13 @@ export class AuthService {
 
   isExpired(): boolean {
     return this.keycloak.getKeycloakInstance().isTokenExpired();
+  }
+
+  public logout(): void {
+    this.keycloak.logout("https://localhost:4200/").then();
+  }
+
+  public login() {
+    this.keycloak.login({ redirectUri: "https://localhost:4200/secured" }).then();
   }
 }

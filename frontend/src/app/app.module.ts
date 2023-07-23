@@ -11,6 +11,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {ChatRoomComponent} from './page/chat-room/chat-room.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StompServiceService} from './stomp-service.service';
+import {CryptoService} from './service/crypto.service';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import {StompServiceService} from './stomp-service.service';
       deps: [KeycloakService],
     },
     StompServiceService,
+    CryptoService,
   ],
   bootstrap: [AppComponent],
 })
