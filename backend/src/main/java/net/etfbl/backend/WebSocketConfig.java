@@ -26,6 +26,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Value("${app.rabbitmq.clientPasscode}")
   private String clientPasscode;
 
+  private final BeforeSocketHandshakeInterceptor beforeSocketHandshakeInterceptor;
+
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.setApplicationDestinationPrefixes("/api");
@@ -41,10 +43,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     }
   }
 
+  // for new SockJS
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
     registry.addEndpoint("/api/ws")
         .setAllowedOrigins(allowedOrigins)
+        .addInterceptors(beforeSocketHandshakeInterceptor)
         .withSockJS(); // Register the WebSocket endpoint for clients to connect
   }
 

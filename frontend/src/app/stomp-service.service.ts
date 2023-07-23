@@ -14,7 +14,8 @@ export class StompServiceService {
   constructor(private auth: AuthService) {
 
     const token = auth.getToken();
-    let url = "https://localhost:8080/api/ws";
+    let url = `https://localhost:8080/api/ws?token=${token}`;
+    // const websocket = new WebSocket(url);
     this.socket = new SockJS(url);
     this.stompClient = Stomp.over(this.socket);
     // this.stompClient.debug = null //TODO: disable logs
