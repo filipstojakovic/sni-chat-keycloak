@@ -7,9 +7,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
@@ -37,9 +35,7 @@ public class BeforeSocketHandshakeInterceptor implements HandshakeInterceptor {
     }
 
     String token = queryList[1];
-    Jwt jwt = jwtDecoder.decode(token);
-    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-    Authentication authentication = converter.convert(jwt);
+    Authentication authentication = JwtUtil.getAuthenticationFromToken(token, jwtDecoder);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
     return true;
@@ -50,7 +46,7 @@ public class BeforeSocketHandshakeInterceptor implements HandshakeInterceptor {
                              final ServerHttpResponse response,
                              final WebSocketHandler wsHandler,
                              final Exception exception) {
-
+    // nothing to see here
   }
 
   private boolean hasOnlyTokenInQuery(String[] queryList) {

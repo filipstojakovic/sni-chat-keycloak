@@ -13,9 +13,8 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
@@ -43,15 +42,14 @@ public class WebSocketAuthenticationConfig implements WebSocketMessageBrokerConf
             log.error("no token in socket header");
             throw new RuntimeException("no token in socket header");
           }
-
-          Jwt jwt = jwtDecoder.decode(authorization.get(0));
-          JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-          Authentication authentication = converter.convert(jwt);
-//           SecurityContextHolder.getContext().setAuthentication(authentication); // maybe?
+          String token = authorization.get(0);
+          Authentication authentication = JwtUtil.getAuthenticationFromToken(token, jwtDecoder);
+          SecurityContextHolder.getContext().setAuthentication(authentication);
           accessor.setUser(authentication);
         }
         return message;
       }
     });
   }
+
 }
