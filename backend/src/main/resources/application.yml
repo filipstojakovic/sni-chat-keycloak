@@ -34,12 +34,8 @@ server:
   port: 8080
   ssl:
     enabled: true
-    key-alias: localhost
-    key-store: classpath:server.jks
-    key-store-type: jks
+    key-alias: chatapp
+    key-store: classpath:certs/keystore.p12
+    key-store-type: pkcs12
     key-store-password: password
     key-password: password
-    trust-store: classpath:server.jks
-    trust-store-password: password
-#    certificate: classpath:localhostcrt.pem
-#    certificate-private-key: classpath:localhostkey.pem

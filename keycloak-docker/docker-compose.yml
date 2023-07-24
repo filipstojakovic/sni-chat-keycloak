@@ -27,21 +27,11 @@ services:
       KEYCLOAK_DATABASE_NAME: keycloak_db
       KEYCLOAK_DATABASE_USER: root
       KEYCLOAK_DATABASE_PASSWORD: root
-#       # Security
-#      KEYCLOAK_ENABLE_TLS: true
-#      KEYCLOAK_TLS_TRUSTSTORE_FILE: /opt/bitnami/keycloak/certs/keycloak.truststore.jks/server.jks
-#      KEYCLOAK_TLS_KEYSTORE_FILE: /opt/bitnami/keycloak/certs/keycloak.keystore.jks/server.jks
-#      KEYCLOAK_TLS_TRUSTSTORE_PASSWORD: password
-#      KEYCLOAK_TLS_KEYSTORE_PASSWORD: password
-#      KEYCLOAK_TLS_CREATE_KEYSTORE: true
-
-#      for https
+      #      for https
       KC_HTTP_ENABLED: true
       KC_HTTPS_CERTIFICATE_FILE: /opt/bitnami/keycloak/certs/localhostcrt.pem
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/bitnami/keycloak/certs/localhostkey.pem
     volumes:
-      - ./store/:/opt/bitnami/keycloak/certs/keycloak.keystore.jks
-      - ./store/:/opt/bitnami/keycloak/certs/keycloak.truststore.jks
       - ./certs/:/opt/bitnami/keycloak/certs
 
     depends_on:

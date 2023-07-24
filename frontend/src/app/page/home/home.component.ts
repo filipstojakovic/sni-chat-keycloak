@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
 import {HttpClient} from '@angular/common/http';
+import {CryptoService} from '../../service/crypto.service';
 
 @Component({
   selector: 'app-home',
@@ -15,10 +16,14 @@ export class HomeComponent implements OnInit {
 
 
   constructor(private authService: AuthService,
+              private cryptoService: CryptoService,
               private http: HttpClient) {
   }
 
   ngOnInit(): void {
+    this.cryptoService.exportKey();
+    this.cryptoService.encryptImg();
+
     this.token2 = this.authService.getToken();
     this.http.get("/api/test",{responseType: 'text'}).subscribe({
           next: (res) => {

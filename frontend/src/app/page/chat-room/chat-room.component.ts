@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {StompServiceService} from '../../stomp-service.service';
+import {CryptoService} from '../../service/crypto.service';
 
 class UserData {
   username: string = "";
@@ -30,7 +31,7 @@ export class ChatRoomComponent implements OnInit {
   messageToSend: string = "ovo je neki test";
   receivedMessages: Message[] = [];
 
-  constructor(private stompService: StompServiceService) {
+  constructor(private stompService: StompServiceService, private cryptoService: CryptoService) {
   }
 
   ngOnInit() {
@@ -40,6 +41,7 @@ export class ChatRoomComponent implements OnInit {
       var payloadData = JSON.parse(payload.body);
       console.log("chat-room.component.ts > (): " + JSON.stringify(payloadData, null, 2));
     })
+
   }
 
   sendMessage() {
@@ -47,5 +49,7 @@ export class ChatRoomComponent implements OnInit {
     this.stompService.sendMessage("/api/message", JSON.stringify(message));
     this.messageToSend = '';
   }
+
+
 
 }
