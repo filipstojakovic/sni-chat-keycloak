@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.cryptoService.exportKey();
-    this.cryptoService.encryptImg();
+    // this.cryptoService.encryptImg();
 
     this.token2 = this.authService.getToken();
     this.http.get("/api/test",{responseType: 'text'}).subscribe({
