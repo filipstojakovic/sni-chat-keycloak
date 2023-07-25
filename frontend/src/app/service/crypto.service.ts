@@ -6,7 +6,6 @@ import WordArray from 'crypto-js/lib-typedarrays';
 import Steganography from './Steganography';
 import * as forge from 'node-forge'
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -77,13 +76,84 @@ export class CryptoService {
     )
   }
 
+  withoutHeaderPrivateKey(){
+
+    this.http.get('assets/cert.key', { responseType: 'text' }).subscribe({
+          next: (res) => {
+
+            const secretMessage = "tajna poruka";
+
+            const strippedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkg/sPwkCE5RDzCShLHii\n" +
+                "+G24YO84rY5/Sg8Ei8gIND8RL8kjPmu9zf572H75JSbSVV9UNSB3tDL6T+ZF77pJ\n" +
+                "Y2IEb4TylpmOUvf4oKzs58y8WPZ1dqnDvOQbqFdvnrWBq+MbqaGxRUI/5ZNJugQT\n" +
+                "R4tqsiFAoUVEsnnmA0XDj369XGacDTY7rIYO7+2BiTgUB2nJsP+9WnfpP0qIOjgn\n" +
+                "KnidX/eEr4hmKQERGqJRY0VjGSb6dV2gWtJMwVyBX2pqgWeiHqKAvhBqsg9fh7fc\n" +
+                "w5EYpa7FI9q9zVsECtl/OaMvTz57OQC9v2iwAXV+67/6PNEAASEiJRXo+kKGQW7W\n" +
+                "owIDAQAB";
+
+            const binaryPublicKey = forge.util.decode64(strippedPublicKey);
+            const ans1PubKey = forge.pki.publicKeyFromAsn1(forge.asn1.fromDer(binaryPublicKey));
+            const rsaPubKey = ans1PubKey as forge.pki.rsa.PublicKey; // mora ovo "AS"
+
+            const encrypt = rsaPubKey.encrypt(secretMessage);
+            const base64 = this.encodeBase64(encrypt);
+
+            console.log("encrypt: " + base64);
+
+
+
+
+            const strippedPrivateKey = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCSD+w/CQITlEPM\n" +
+                "JKEseKL4bbhg7zitjn9KDwSLyAg0PxEvySM+a73N/nvYfvklJtJVX1Q1IHe0MvpP\n" +
+                "5kXvukljYgRvhPKWmY5S9/igrOznzLxY9nV2qcO85BuoV2+etYGr4xupobFFQj/l\n" +
+                "k0m6BBNHi2qyIUChRUSyeeYDRcOPfr1cZpwNNjushg7v7YGJOBQHacmw/71ad+k/\n" +
+                "Sog6OCcqeJ1f94SviGYpAREaolFjRWMZJvp1XaBa0kzBXIFfamqBZ6IeooC+EGqy\n" +
+                "D1+Ht9zDkRilrsUj2r3NWwQK2X85oy9PPns5AL2/aLABdX7rv/o80QABISIlFej6\n" +
+                "QoZBbtajAgMBAAECggEAOsJ3GyDHmhLSd4Tg5iAeB+0z+KMkXQXvhV6nSIiPbF1W\n" +
+                "z6+OIyV69S0Eq6LhHiYRBdFU8g5+uZqsgooz5m496eJbwHVullFuJUim2BTZNaNy\n" +
+                "viNgO/2txgbKbZ3HRMTmRr0VutdWlnNBe10WkuPi0axvnvuroXVZXqeVdgmR097g\n" +
+                "P2XP/PtV7mPXBqVfPtKu/gnhDsoqpfdNVeL9HFw6uYdThmfS+e5ZXBZcdKDuR1c7\n" +
+                "PfTHO7UOJ3OsbhwBMMlg3Bv/mPogelDnQW2egahfshXpINxQ4caJzV+IJsku/ViD\n" +
+                "siXEqBnkqlfVWcO0dNkadHVm3hnRx9cxbsOPctLfEQKBgQDBiM5CuiVPFSV++BuY\n" +
+                "RLcPQBzJFzqdyA+qGlMmSacFiTZ3Ud8+sjXUUFAa+RkZXbifjblg+7CXnBicmW6E\n" +
+                "MY21GyBXnbfD304NkeIsUP7A1iRw5/0PGVP+UZSYaRA1kDQOx8hh7JZr8ApOQIxw\n" +
+                "QXzY0uhl18DC7wdUmBM7OxK/CQKBgQDBNJ//HMF9InuNPB/1wKebfNjSuZFMMnIA\n" +
+                "iw/rXBclUm7zCE3qpEe2FsxRiiBuXXK3ZVOVwuyWIAeDfiiVwH6iI+JKxpP51X4K\n" +
+                "LlWw08pomgLQ3UkjetiCSv1VjvSk9Vc7EcYFvoAoxiE492bHNvZNpXNkOnCPM1Qo\n" +
+                "XyVHuEKnSwKBgQCRosY8NmG++hXGTyRM2GC9DCzdMiq88wC+q6KorEIQi2m+LpEF\n" +
+                "WAvj4i/1rD+z8+/ruTWoAp6n6CIpLdiZh8SwZWJYLGpN7muJEJ+XY7fhGwQ/JoQq\n" +
+                "6Y9oULG2Y1F8TTCvcq2a6vNi9DZ9HlvQWad+bm/Nu6blygPFJ89JAjIgKQKBgE+D\n" +
+                "tQVtdERn2Kl7wTuHGnPnoeS38pCFgl2u3dJjiDMYBgmHtWmISusp3tUAH/DMDNZl\n" +
+                "oUzVeEEg1XbMiS94laVtV0inCWec8c6G20V3JKqAGACV0fAEMu8Mpc58kzsArfHl\n" +
+                "krXyfRRK1ol3aJk8iYnTOfZaBtEoss4aumEV+HiZAoGAWy1ffZ0fkYlZhrGNTaK9\n" +
+                "9ZhhWRGAvmuBTiVzqwLEoCt8weMao7Omob352c8V3ONSbKHnqv6IjhqREETuVnmW\n" +
+                "U9gDtum9eZP9G068QAg23EF/U/xllJNrb1Yvhanl35+X5YQJJmdoz02Vkocjfmp6\n" +
+                "NdIBqnROk1DhY/osTywSq/A="
+
+            const binaryPrivateKey = forge.util.decode64(strippedPrivateKey);
+            const privateKey = forge.pki.privateKeyFromAsn1(forge.asn1.fromDer(binaryPrivateKey)) as forge.pki.rsa.PrivateKey;
+            //
+            const decrypted = privateKey.decrypt(encrypt);
+            console.log("decrypted:" + decrypted);
+
+          },
+          error: (err) => {
+            console.error(err.message);
+          },
+        },
+    );
+
+
+    }
+
   exportKey() {
     this.http.get('assets/cert.key', { responseType: 'text' })
         .subscribe(data => {
 
           const ed25519 = forge.pki.ed25519;
 
-          const pubKey = forge.pki.publicKeyFromPem("-----BEGIN PUBLIC KEY-----\n" +
+          const pubKey = forge.pki.publicKeyFromPem(
+              "-----BEGIN PUBLIC KEY-----\n" +
               "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnwlkWTv0CFJhAbgbXIDT\n" +
               "mYKk0ZlVBTvuBaYwZpyWzcDR0iab/ug+XK0CKjHxU+eeymG/q0asJc3vgYexPfEE\n" +
               "45ktb2ePCKUuXLEDHXuwDvKyrBHu0/9XklmgUwKQnGCIQbIpkqdYwZOMULjlu7Te\n" +
@@ -100,7 +170,8 @@ export class CryptoService {
           console.log("encrypt: " + base64);
 
 
-          const privateKey = forge.pki.privateKeyFromPem("-----BEGIN RSA PRIVATE KEY-----\n" +
+          const privateKey = forge.pki.privateKeyFromPem(
+              "-----BEGIN RSA PRIVATE KEY-----\n" +
               "MIIEowIBAAKCAQEAnwlkWTv0CFJhAbgbXIDTmYKk0ZlVBTvuBaYwZpyWzcDR0iab\n" +
               "/ug+XK0CKjHxU+eeymG/q0asJc3vgYexPfEE45ktb2ePCKUuXLEDHXuwDvKyrBHu\n" +
               "0/9XklmgUwKQnGCIQbIpkqdYwZOMULjlu7TebRqxhPAN3F/w2xlqRAptU1EhHB+/\n" +

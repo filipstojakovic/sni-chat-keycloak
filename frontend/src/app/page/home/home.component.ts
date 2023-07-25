@@ -21,7 +21,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.cryptoService.exportKey();
+    this.cryptoService.withoutHeaderPrivateKey();
+    // this.cryptoService.exportKey();
     // this.cryptoService.encryptImg();
 
     this.token2 = this.authService.getToken();
@@ -35,16 +36,16 @@ export class HomeComponent implements OnInit {
           },
         },
     )
-    this.http.get("/api1/test",{responseType: 'text'}).subscribe({
-          next: (res) => {
-            console.log("home.component.ts > next(): "+ JSON.stringify(res, null, 2));
-            this.res1 = JSON.stringify(res);
-          },
-          error: (err) => {
-            console.log("error(): res1: "+ err.message);
-          },
-        },
-    )
+    // this.http.get("/api1/test",{responseType: 'text'}).subscribe({
+    //       next: (res) => {
+    //         console.log("home.component.ts > next(): "+ JSON.stringify(res, null, 2));
+    //         this.res1 = JSON.stringify(res);
+    //       },
+    //       error: (err) => {
+    //         console.log("error(): res1: "+ err.message);
+    //       },
+    //     },
+    // )
   }
 
   logout() {
