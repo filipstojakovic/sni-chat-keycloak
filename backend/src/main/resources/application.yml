@@ -22,7 +22,7 @@ logging:
 
 app:
   rabbitmq:
-    enable: true
+    enable: false
     relayHost: localhost
     relayPort: 61613
     clientLogin: guest

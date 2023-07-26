@@ -46,9 +46,4 @@ export class StompServiceService {
     this.stompClient.send(to, {}, chatMessage);
   }
 
-  connect() {
-    this.stompClient.connect("", (): any => {
-      console.log("stomp-service.service.ts > connect(): " + "empty connect");
-    })
-  }
 }

@@ -33,6 +33,7 @@ services:
       KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/bitnami/keycloak/certs/localhostkey.pem
     volumes:
       - ./certs/:/opt/bitnami/keycloak/certs
+      - ./realms/:/opt/bitnami/keycloak/data/my-realms
 
     depends_on:
       - postgres

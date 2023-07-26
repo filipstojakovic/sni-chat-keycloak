@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {KeycloakAuthGuard, KeycloakService} from 'keycloak-angular';
-import {environment} from '../../environments/environment.development';
 
 
 @Injectable({
@@ -13,14 +12,14 @@ export class AuthGuard extends KeycloakAuthGuard {
    *  https://www.npmjs.com/package/keycloak-angular#authguard
    */
   constructor(
-      protected override readonly router: Router,
-      private readonly keycloak: KeycloakService) {
+    protected override readonly router: Router,
+    private readonly keycloak: KeycloakService) {
     super(router, keycloak);
   }
 
   public async isAccessAllowed(
-      route: ActivatedRouteSnapshot,
-      state: RouterStateSnapshot,
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
   ): Promise<boolean> {
 
     let authenticated = this.keycloak.getKeycloakInstance().authenticated;
@@ -28,6 +27,10 @@ export class AuthGuard extends KeycloakAuthGuard {
       await this.keycloak.login({
         redirectUri: window.location.origin + state.url,
       });
+    }
+
+    if (this.keycloak.isTokenExpired()){ // TODO: delete me
+      console.error("auth.guard.ts > isAccessAllowed(): " + "TOKEN EXPIRED");
     }
 
     const requiredRoles = route.data['role']; // data send through Route in RouterModule, =>  data: { role: [RoleEnum.admin, RoleEnum.user] }

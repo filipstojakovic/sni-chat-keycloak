@@ -7,6 +7,8 @@ import {from, Observable} from 'rxjs';
 })
 export class AuthService {
 
+  public static readonly USERNAME = "preferred_username";
+
   keycloak = inject(KeycloakService);
 
   constructor() {
@@ -17,7 +19,11 @@ export class AuthService {
     });
   }
 
-  public getToken(): string {
+  getKeycloakInstance() {
+    return this.keycloak.getKeycloakInstance();
+  }
+
+  getToken(): string {
     return this.keycloak.getKeycloakInstance()?.token as string;
   }
 
@@ -26,7 +32,8 @@ export class AuthService {
   }
 
   getUsername(): string {
-    return this.keycloak.getKeycloakInstance()?.profile?.username as string;
+    const username = this.keycloak.getKeycloakInstance()?.profile?.username as string;
+    return username ? username : this.keycloak.getKeycloakInstance().tokenParsed[AuthService.USERNAME]
   }
 
   getId(): string {
@@ -34,7 +41,8 @@ export class AuthService {
   }
 
   getTokenExpirationDate(): number {
-    return (this.keycloak.getKeycloakInstance().refreshTokenParsed as { exp: number })['exp'] as number;
+    const expDate = (this.keycloak.getKeycloakInstance().refreshTokenParsed as { exp: number })['exp'] as number;
+    return expDate ? expDate : this.keycloak.getKeycloakInstance().tokenParsed[AuthService.USERNAME]
   }
 
   refresh(): Observable<any> {
@@ -45,11 +53,11 @@ export class AuthService {
     return this.keycloak.getKeycloakInstance().isTokenExpired();
   }
 
-  public logout(): void {
+  logout(): void {
     this.keycloak.logout("https://localhost:4200/").then();
   }
 
-  public login() {
-    this.keycloak.login({ redirectUri: "https://localhost:4200/secured" }).then();
+  login() {
+    this.keycloak.login({redirectUri: "https://localhost:4200/secured"}).then();
   }
 }

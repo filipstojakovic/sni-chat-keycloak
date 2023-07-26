@@ -16,9 +16,11 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
 
   private final SimpMessagingTemplate simpMessagingTemplate;
+  private final ChatMessageService chatMessageService;
+  private final CharRoomService charRoomService;
 
   /**
-   *  https://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-handle-annotations
+   * <a href="https://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-handle-annotations">Websocket annotations</a>
    */
   @MessageMapping("/message")
   @SendTo("/chatroom/public")
@@ -26,15 +28,18 @@ public class MessageController {
                                   StompHeaderAccessor headers,
                                   JwtAuthenticationToken principal) {
     log.info("OVO JE ZNAK DA SE VRACA PORUKA: receiveMessage(@Payload Message message){ ");
-    String name = (String) JwtUtil.getClaim(principal,JwtUtil.USERNAME);
+    String name = (String) JwtUtil.getClaim(principal, JwtUtil.USERNAME);
     myMessage.setMessage("OVO JE PORUKA OD SERVERA BURAZ");
     return myMessage;
   }
 
   @MessageMapping("/private-message")
   public MyMessage recMessage(@Payload MyMessage myMessage) {
+
+    log.info("MessageController > recMessage() :" + "ovo je na serveru");
     simpMessagingTemplate.convertAndSendToUser(myMessage.getReceiverName(), "/private", myMessage); // client listens on /user/{username}/private
     System.out.println(myMessage.toString());
     return myMessage;
   }
+
 }
