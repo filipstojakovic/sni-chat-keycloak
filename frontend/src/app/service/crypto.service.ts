@@ -3,8 +3,8 @@ import {HttpClient} from '@angular/common/http';
 import Base64 from 'crypto-js/enc-base64';
 import CryptoJS from 'crypto-js'
 import WordArray from 'crypto-js/lib-typedarrays';
-import Steganography from './Steganography';
 import * as forge from 'node-forge'
+import steggy from 'steggy';
 
 @Injectable({
   providedIn: 'root',
@@ -59,28 +59,48 @@ export class CryptoService {
     return {key, iv};
   }
 
-  imageEncrypt() {
+  imageEncryptV2() {
     this.http.get('assets/png.png', {responseType: 'arraybuffer'}).subscribe({
         next: (res) => {
+          const buffer = Buffer.from(res);
+          const secretMessage = "secret message in image";
+          const concealed = steggy.conceal(/* optional password */)(buffer, secretMessage /*, encoding */)
+          var b64 = Buffer.from(concealed).toString('base64');
 
-          const message = 'keep it secret, keep it safe' // string or buffer
-          const stege = new Steganography();
+          console.log(b64);
 
-          const image = stege.hideMessage(res, message);
-          // const base64String = btoa(String.fromCharCode(...new Uint8Array(image)));
-          const base64String = this.arrayBufferToBase64(image);
-          console.log(image);
-
-          const decodeBase64 = this.base64ToArrayBuffer(base64String);
-          const secret = stege.retrieveMessage(decodeBase64);
-          console.log("decoded: " + secret);
+          const revealed = steggy.reveal(/* optional password */)(concealed /*, encoding */)
+          console.log("crypto.service.ts > revealed(): "+ revealed);
         },
         error: (err) => {
           console.error(err.message);
         },
       },
-    )
+    );
   }
+
+  // imageEncrypt() {
+  //   this.http.get('assets/png.png', {responseType: 'arraybuffer'}).subscribe({
+  //       next: (res) => {
+  //
+  //         const message = 'keep it secret, keep it safe' // string or buffer
+  //         const stege = new Steganography();
+  //
+  //         const image = stege.hideMessage(res, message);
+  //         // const base64String = btoa(String.fromCharCode(...new Uint8Array(image)));
+  //         const base64String = this.arrayBufferToBase64(image);
+  //         console.log(image);
+  //
+  //         const decodeBase64 = this.base64ToArrayBuffer(base64String);
+  //         const secret = stege.retrieveMessage(decodeBase64);
+  //         console.log("decoded: " + secret);
+  //       },
+  //       error: (err) => {
+  //         console.error(err.message);
+  //       },
+  //     },
+  //   )
+  // }
 
   symmetricEncryption() {
 

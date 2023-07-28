@@ -29,10 +29,10 @@ export class HomeComponent implements OnInit {
     // this.cryptoService.symmetricEncryption();
     // this.cryptoService.withoutHeaderPrivateKey();
     // this.cryptoService.exportKey();
-    this.cryptoService.imageEncrypt();
+    this.cryptoService.imageEncryptV2();
 
     this.token2 = this.authService.getToken();
-    this.http.get("/api/test", { responseType: 'text' }).subscribe({
+    this.http.get("/api/test", { responseType: 'blob' }).subscribe({
         next: (res) => {
           console.log("home.component.ts > next(): " + JSON.stringify(res, null, 2));
           this.res = JSON.stringify(res);
