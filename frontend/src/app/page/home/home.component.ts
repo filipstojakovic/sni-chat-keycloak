@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
 import {HttpClient} from '@angular/common/http';
 import {CryptoService} from '../../service/crypto.service';
+import {UserService} from '../../service/user.service';
+import {User} from '../../model/user';
 
 @Component({
   selector: 'app-home',
@@ -9,6 +11,7 @@ import {CryptoService} from '../../service/crypto.service';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
+  items = [1, 2, 3, 4, 5];
   res: string = "res";
   res1: string = "res";
 
@@ -17,16 +20,19 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private cryptoService: CryptoService,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private userService: UserService
+  ) {
   }
 
   ngOnInit(): void {
-    this.cryptoService.withoutHeaderPrivateKey();
+    // this.cryptoService.symmetricEncryption();
+    // this.cryptoService.withoutHeaderPrivateKey();
     // this.cryptoService.exportKey();
-    // this.cryptoService.encryptImg();
+    this.cryptoService.imageEncrypt();
 
     this.token2 = this.authService.getToken();
-    this.http.get("/api/test", {responseType: 'text'}).subscribe({
+    this.http.get("/api/test", { responseType: 'text' }).subscribe({
         next: (res) => {
           console.log("home.component.ts > next(): " + JSON.stringify(res, null, 2));
           this.res = JSON.stringify(res);
@@ -39,10 +45,11 @@ export class HomeComponent implements OnInit {
 
 
     //TODO: get users from server
-    this.http.get("http://localhost:9000/admin/realms/my-realm/users").subscribe({
+    this.userService.getAllUsers().subscribe({
         next: (res) => {
-          console.log("home.component.ts > next(): "+ "users");
-          console.table(res);
+          const users: User[] = res;
+          console.log("home.component.ts > next(): " + "users");
+          console.log(users);
         },
         error: (err) => {
           console.error(err.message);

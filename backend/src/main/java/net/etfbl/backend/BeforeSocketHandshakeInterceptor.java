@@ -51,7 +51,7 @@ public class BeforeSocketHandshakeInterceptor implements HandshakeInterceptor {
 
   private boolean hasOnlyTokenInQuery(String[] queryList) {
     return queryList.length == 2
-        && TOKEN_FIELD_NAME.equals(queryList[0])
-        && !queryList[1].isEmpty();
+      && TOKEN_FIELD_NAME.equals(queryList[0])
+      && !queryList[1].isEmpty();
   }
 }

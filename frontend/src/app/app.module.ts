@@ -12,6 +12,8 @@ import {ChatRoomComponent} from './page/chat-room/chat-room.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StompServiceService} from './stomp-service.service';
 import {CryptoService} from './service/crypto.service';
+import {UserService} from './service/user.service';
+import {MaterialModule} from '../material.module';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import {CryptoService} from './service/crypto.service';
     BrowserAnimationsModule,
     KeycloakAngularModule,
     HttpClientModule,
+    MaterialModule,
   ],
   providers: [
     {
@@ -37,6 +40,7 @@ import {CryptoService} from './service/crypto.service';
     },
     StompServiceService,
     CryptoService,
+    UserService,
   ],
   bootstrap: [AppComponent],
 })

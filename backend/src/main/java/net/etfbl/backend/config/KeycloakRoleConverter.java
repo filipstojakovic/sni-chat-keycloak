@@ -25,13 +25,13 @@ public class KeycloakRoleConverter implements Converter<Jwt, Collection<GrantedA
     final Map<String, Object> claims = jwt.getClaims();
 
     final Map<String, Map<String, List<String>>> resourceAccess =
-        (Map<String, Map<String, List<String>>>) claims.getOrDefault("resource_access", emptyMap());
+      (Map<String, Map<String, List<String>>>) claims.getOrDefault("resource_access", emptyMap());
 
     Map<String, List<String>> backendRoles = resourceAccess.getOrDefault("backend", emptyMap());
 
     return backendRoles.getOrDefault("roles", emptyList())
-        .stream()
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-        .collect(Collectors.toList());
+      .stream()
+      .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+      .collect(Collectors.toList());
   }
 }

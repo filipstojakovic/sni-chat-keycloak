@@ -29,7 +29,7 @@ export class AuthGuard extends KeycloakAuthGuard {
       });
     }
 
-    if (this.keycloak.isTokenExpired()){ // TODO: delete me
+    if (this.keycloak.isTokenExpired()) { // TODO: delete me
       console.error("auth.guard.ts > isAccessAllowed(): " + "TOKEN EXPIRED");
     }
 

@@ -6,12 +6,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-#    volumes:
-#      - "./data/:/var/lib/rabbitmq/"
-#      - "./log/:/var/log/rabbitmq/"
-#    environment:
-#      KEYCLOAK_CREATE_ADMIN_USER: true
-#      KEYCLOAK_ADMIN_USER: admin
+    #    volumes:
+    #      - "./data/:/var/lib/rabbitmq/"
+    #      - "./log/:/var/log/rabbitmq/"
+    #    environment:
+    #      KEYCLOAK_CREATE_ADMIN_USER: true
+    #      KEYCLOAK_ADMIN_USER: admin
     networks:
       - rabbitmq_go_net
 

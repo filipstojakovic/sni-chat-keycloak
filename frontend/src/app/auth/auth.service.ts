@@ -58,6 +58,6 @@ export class AuthService {
   }
 
   login() {
-    this.keycloak.login({redirectUri: "https://localhost:4200/secured"}).then();
+    this.keycloak.login({ redirectUri: "https://localhost:4200/secured" }).then();
   }
 }

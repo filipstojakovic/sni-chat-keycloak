@@ -26,20 +26,20 @@ public class SecurityConfig {
   protected SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 //     http.cors(Customizer.withDefaults())
     http.cors(c -> c.configurationSource(corsConfigurationSource))
-        .csrf(AbstractHttpConfigurer::disable)
-        .authorizeHttpRequests(r -> {
-              r.requestMatchers("/favicon.ico", "/api/ws/**", "/error").permitAll();
-              r.requestMatchers("/test/*").permitAll();
-              r.anyRequest().authenticated();
-            }
-        )
-        .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-        .exceptionHandling(e -> e.authenticationEntryPoint(errorHandler))
-        .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .oauth2ResourceServer(
-            httpSecurityOAuth2ResourceServerConfigurer ->
-                httpSecurityOAuth2ResourceServerConfigurer.jwt(
-                    jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtConverter())));
+      .csrf(AbstractHttpConfigurer::disable)
+      .authorizeHttpRequests(r -> {
+          r.requestMatchers("/favicon.ico", "/api/ws/**", "/error").permitAll();
+          r.requestMatchers("/test/*").permitAll();
+          r.anyRequest().authenticated();
+        }
+      )
+      .headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
+      .exceptionHandling(e -> e.authenticationEntryPoint(errorHandler))
+      .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+      .oauth2ResourceServer(
+        httpSecurityOAuth2ResourceServerConfigurer ->
+          httpSecurityOAuth2ResourceServerConfigurer.jwt(
+            jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtConverter())));
 
     return http.build();
   }

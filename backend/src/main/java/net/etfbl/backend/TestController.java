@@ -19,33 +19,32 @@ import java.security.cert.X509Certificate;
 @RestController
 public class TestController {
 
-    private final RestTemplate restTemplate;
-    @Value("${server.port}")
-    private int serverPort;
+  public static final String X_509 = "X.509";
+  private final RestTemplate restTemplate;
+  @Value("${server.port}")
+  private int serverPort;
 
-    public TestController(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.build();
-    }
+  public TestController(RestTemplateBuilder restTemplateBuilder) {
+    this.restTemplate = restTemplateBuilder.build();
+  }
 
-    @GetMapping("api/test")
-    public String test(@AuthenticationPrincipal Jwt jwt) {
-        // test secured method
-        return "test security from port: " + serverPort;
-    }
+  @GetMapping("api/test")
+  public String test(@AuthenticationPrincipal Jwt jwt) {
+    // test secured method
+    return "test security from port: " + serverPort;
+  }
 
-    public static final String X_509 = "X.509";
+  @GetMapping("test/cert")
+  public String base64CertificatePublicKey() throws Exception {
+    File file = ResourceUtils.getFile("classpath:certs/users/localhostcrt.pem");
+    CertificateFactory factory = CertificateFactory.getInstance(X_509);
+    var test = (X509Certificate) factory.generateCertificate(new FileInputStream(file));
 
-    @GetMapping("test/cert")
-    public String base64CertificatePublicKey() throws Exception {
-        File file = ResourceUtils.getFile("classpath:certs/users/localhostcrt.pem");
-        CertificateFactory factory = CertificateFactory.getInstance(X_509);
-        var test = (X509Certificate) factory.generateCertificate(new FileInputStream(file));
+    PublicKey publicKey = test.getPublicKey();
 
-        PublicKey publicKey = test.getPublicKey();
+    byte[] pubKey = publicKey.getEncoded();
+    String base64Key = Base64.encode(pubKey).toString();
 
-        byte[] pubKey = publicKey.getEncoded();
-        String base64Key = Base64.encode(pubKey).toString();
-
-        return base64Key;
-    }
+    return base64Key;
+  }
 }

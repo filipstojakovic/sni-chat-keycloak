@@ -8,42 +8,47 @@ import {AuthService} from './auth/auth.service';
 })
 export class StompServiceService {
 
-  private readonly socket;
-  private stompClient;
+  private stompClientMap = new Map<number, Stomp.Client>();
 
   constructor(private auth: AuthService) {
-
-    const token = auth.getToken();
-    let url = `https://localhost:8080/api/ws?token=${token}`;
-    // const websocket = new WebSocket(url);
-    this.socket = new SockJS(url);
-    this.stompClient = Stomp.over(this.socket);
-    // this.stompClient.debug = null //TODO: disable logs
   }
 
-  subscribe(topic: string, callback: any): void {
-    const connected: boolean = this.stompClient.connected;
+  connect(port: number = 8080) {
+    const token = this.auth.getToken();
+    let url = `https://localhost:${port}/api/ws?token=${token}`;
+
+    const socket = new SockJS(url);
+    const stompClient = Stomp.over(socket);
+    // this.stompClient.debug = null //TODO: disable logs
+    this.stompClientMap.set(port, stompClient);
+  }
+
+  subscribe(port: number, topic: string, callback: any): void {
+    const stompClient = this.stompClientMap.get(port);
+    const connected: boolean = stompClient.connected;
     if (connected) {
       console.warn("ALREADY CONNECTED");
-      this.subscribeToTopic(topic, callback);
+      this.subscribeToTopic(port, topic, callback);
       return;
     }
     // if stomp client is not connected
-    this.stompClient.connect({
-      "X-Authorization": this.auth.getToken()
+    stompClient.connect({
+      "X-Authorization": this.auth.getToken(),
     }, (): any => {
-      this.subscribeToTopic(topic, callback);
+      this.subscribeToTopic(port, topic, callback);
     })
   }
 
-  private subscribeToTopic(topic: string, callback: any) {
-    this.stompClient.subscribe(topic, (payload): any => {
+  sendMessage(port: number, to: string, chatMessage: string) {
+    const stompClient = this.stompClientMap.get(port);
+    stompClient.send(to, {}, chatMessage);
+  }
+
+  private subscribeToTopic(port: number, topic: string, callback: any) {
+    const stompClient = this.stompClientMap.get(port);
+    stompClient.subscribe(topic, (payload): any => {
       callback(payload);
     })
-  }
-
-  sendMessage(to: string, chatMessage: string) {
-    this.stompClient.send(to, {}, chatMessage);
   }
 
 }

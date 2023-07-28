@@ -34,10 +34,16 @@ export class ChatRoomComponent implements OnInit {
   messageToSend: string = "ovo je neki test";
   receivedMessages: Message[] = [];
 
-  constructor(private stompService: StompServiceService, private cryptoService: CryptoService, private auth: AuthService) {
+  constructor(private stompService: StompServiceService,
+              private cryptoService: CryptoService,
+              private auth: AuthService) {
   }
 
   ngOnInit() {
+
+    this.stompService.connect(8080);
+    // this.stompService.connect(8081);
+
     // this.stompService.subscribe("/chatroom/public", (payload) => {
     //   console.log("chat-room.component.ts > (): " + "something happend");
     //
@@ -45,26 +51,30 @@ export class ChatRoomComponent implements OnInit {
     //   console.log("chat-room.component.ts > (): " + JSON.stringify(payloadData, null, 2));
     // })
 
-    const key = this.auth.getKeycloakInstance();
 
     //private stuff
-    this.stompService.subscribe("/user/" + this.auth.getUsername() + "/private", (message) => {
+    this.stompService.subscribe(8080, "/user/" + this.auth.getUsername() + "/private", (message) => {
       const mess = JSON.parse(message.body);
       console.log("private message: " + JSON.stringify(mess, null, 2));
     });
 
-
+    // this.stompService.subscribe(8081, "/user/" + this.auth.getUsername() + "/private", (message) => {
+    //   const mess = JSON.parse(message.body);
+    //   console.log("private message: " + JSON.stringify(mess, null, 2));
+    // });
   }
 
   sendMessage() {
-    const message: Message = { message: this.messageToSend, receiverName: "user1", timestamp: new Date };
-    this.stompService.sendMessage("/api/message", JSON.stringify(message));
+    const message: Message = {message: this.messageToSend, receiverName: "user1", timestamp: new Date};
+    this.stompService.sendMessage(8080,"/api/message", JSON.stringify(message));
     this.messageToSend = '';
   }
 
   sendPrivateMessage() {
-    const message: Message = { message: this.messageToSend, receiverName: "user1", timestamp: new Date };
-    this.stompService.sendMessage("/api/private-message", JSON.stringify(message));
+    const message: Message = {message: this.messageToSend, receiverName: "user1", timestamp: new Date};
+    this.stompService.sendMessage(8080,"/api/private-message", JSON.stringify(message));
+    // this.stompService.sendMessage(8081,"/api/private-message", JSON.stringify(message));
+
     this.messageToSend = '';
   }
 

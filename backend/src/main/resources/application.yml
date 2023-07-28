@@ -1,8 +1,8 @@
 spring:
-#  datasource:
-#    username: root
-#    password: root
-#    url: jdbc:mysql://localhost/sni-chat?createDatabaseIfNotExist=true
+  #  datasource:
+  #    username: root
+  #    password: root
+  #    url: jdbc:mysql://localhost/sni-chat?createDatabaseIfNotExist=true
   jpa:
     show-sql: false
   application:
@@ -22,7 +22,7 @@ logging:
 
 app:
   rabbitmq:
-    enable: false
+    enable: true
     relayHost: localhost
     relayPort: 61613
     clientLogin: guest

@@ -2,18 +2,37 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "paths" : {
-      "crypto": ["./node_modules/crypto-browserify"],
-      "stream": ["./node_modules/stream-browserify"],
-      "assert": ["./node_modules/assert"],
-      "http": ["./node_modules/stream-http"],
-      "https": ["./node_modules/https-browserify"],
-      "os": ["./node_modules/os-browserify"],
-      "buffer": ["./node_modules/buffer"],
-      "zlib": ["./node_modules/browserify-zlib"],
-      "path":  ["./node_modules/path-browserify"],
-      "fs": ["./node_modules/fs-web"]
-
+    "paths": {
+      "crypto": [
+        "./node_modules/crypto-browserify"
+      ],
+      "stream": [
+        "./node_modules/stream-browserify"
+      ],
+      "assert": [
+        "./node_modules/assert"
+      ],
+      "http": [
+        "./node_modules/stream-http"
+      ],
+      "https": [
+        "./node_modules/https-browserify"
+      ],
+      "os": [
+        "./node_modules/os-browserify"
+      ],
+      "buffer": [
+        "./node_modules/buffer"
+      ],
+      "zlib": [
+        "./node_modules/browserify-zlib"
+      ],
+      "path": [
+        "./node_modules/path-browserify"
+      ],
+      "fs": [
+        "./node_modules/fs-web"
+      ]
     },
     "allowSyntheticDefaultImports": true,
     "baseUrl": "./",

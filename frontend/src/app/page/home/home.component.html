@@ -1,10 +1,16 @@
 <p>home works!</p>
-<input type="button" value="logout" (click)="logout()">
+<input (click)="logout()" type="button" value="logout">
 
 
-<div>{{token2}}</div>
+<div style="width: 100%; word-wrap: break-word">{{token2}}</div>
 <h3>resource server</h3>
 <div>res: {{res}}</div>
 <div>res1: {{res1}}</div>
 
 
+<mat-selection-list [multiple]="false" >
+<!--  <mat-divider></mat-divider>-->
+  <mat-list-option *ngFor="let item of items" [value]="item">
+    <span class="chat-name">{{ item }}</span>
+  </mat-list-option>
+</mat-selection-list>
