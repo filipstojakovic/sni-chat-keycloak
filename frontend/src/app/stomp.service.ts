@@ -6,7 +6,7 @@ import {AuthService} from './auth/auth.service';
 @Injectable({
   providedIn: 'root',
 })
-export class StompServiceService {
+export class StompService {
 
   private stompClientMap = new Map<number, Stomp.Client>();
 

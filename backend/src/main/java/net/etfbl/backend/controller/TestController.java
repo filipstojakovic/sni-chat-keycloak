@@ -1,4 +1,4 @@
-package net.etfbl.backend;
+package net.etfbl.backend.controller;
 
 import com.nimbusds.jose.util.Base64;
 import org.springframework.beans.factory.annotation.Value;

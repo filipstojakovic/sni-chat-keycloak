@@ -8,6 +8,7 @@ import {from, Observable} from 'rxjs';
 export class AuthService {
 
   public static readonly USERNAME = "preferred_username";
+  public static readonly FULL_NAME = "name";
 
   keycloak = inject(KeycloakService);
 
@@ -38,6 +39,10 @@ export class AuthService {
 
   getId(): string {
     return this.keycloak?.getKeycloakInstance()?.profile?.id as string;
+  }
+
+  getFullName() {
+    return this.keycloak.getKeycloakInstance().tokenParsed[AuthService.FULL_NAME];
   }
 
   getTokenExpirationDate(): number {

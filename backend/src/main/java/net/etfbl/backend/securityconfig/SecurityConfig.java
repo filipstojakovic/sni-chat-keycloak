@@ -1,4 +1,4 @@
-package net.etfbl.backend.config;
+package net.etfbl.backend.securityconfig;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

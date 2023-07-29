@@ -1,24 +1,46 @@
-.mdc-list-item__end {
-  display: none !important;
+.container {
+  display: flex;
+  flex-direction: row;
+  margin: 10px;
+  height: calc(100% - 90px);
 }
 
-.mat-mdc-list-base {
-  text-align: center;
-  --mdc-list-list-item-label-text-color: black;
-  --mdc-list-list-item-supporting-text-color: rgba(0, 0, 0, 0.54);
-  --mdc-list-list-item-leading-icon-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-trailing-supporting-text-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-trailing-icon-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-selected-trailing-icon-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-disabled-label-text-color: black;
-  --mdc-list-list-item-disabled-leading-icon-color: black;
-  --mdc-list-list-item-disabled-trailing-icon-color: black;
-  --mdc-list-list-item-hover-label-text-color: rgba(0, 0, 0, 0.87);
-  --mdc-list-list-item-hover-leading-icon-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-hover-trailing-icon-color: rgba(0, 0, 0, 0.38);
-  --mdc-list-list-item-focus-label-text-color: rgba(0, 0, 0, 0.87);
-  --mdc-list-list-item-hover-state-layer-color: green;
-  --mdc-list-list-item-hover-state-layer-opacity: 0.25;
-  --mdc-list-list-item-focus-state-layer-color: green;
-  --mdc-list-list-item-focus-state-layer-opacity: 0.5;
+.left-container {
+  flex: 1;
+  background-color: #f0f0f0;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.right-container {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  background-color: #d0d0d0;
+  margin-left: 10px;
+  padding: 10px;
+  justify-content: space-between;
+}
+
+.all-messages-container {
+  overflow-y: auto;
+  flex: 4;
+  display:flex;
+  flex-direction: column-reverse;
+}
+
+.type-messages-container {
+  flex: 1;
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+textarea {
+  resize: none;
+}
+
+.mat-list-single-selected-option {
+  background-color: green;
 }

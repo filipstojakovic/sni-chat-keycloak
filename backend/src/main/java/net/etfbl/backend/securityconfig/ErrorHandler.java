@@ -1,4 +1,4 @@
-package net.etfbl.backend.config;
+package net.etfbl.backend.securityconfig;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

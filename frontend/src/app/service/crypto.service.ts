@@ -56,11 +56,11 @@ export class CryptoService {
   generateSymmetricKey() {
     const key = forge.random.getBytesSync(16);
     const iv = forge.random.getBytesSync(8);
-    return {key, iv};
+    return { key, iv };
   }
 
   imageEncryptV2() {
-    this.http.get('assets/png.png', {responseType: 'arraybuffer'}).subscribe({
+    this.http.get('assets/png.png', { responseType: 'arraybuffer' }).subscribe({
         next: (res) => {
           const buffer = Buffer.from(res);
           const secretMessage = "secret message in image";
@@ -70,7 +70,7 @@ export class CryptoService {
           console.log(b64);
 
           const revealed = steggy.reveal(/* optional password */)(concealed /*, encoding */)
-          console.log("crypto.service.ts > revealed(): "+ revealed);
+          console.log("crypto.service.ts > revealed(): " + revealed);
         },
         error: (err) => {
           console.error(err.message);
@@ -79,33 +79,10 @@ export class CryptoService {
     );
   }
 
-  // imageEncrypt() {
-  //   this.http.get('assets/png.png', {responseType: 'arraybuffer'}).subscribe({
-  //       next: (res) => {
-  //
-  //         const message = 'keep it secret, keep it safe' // string or buffer
-  //         const stege = new Steganography();
-  //
-  //         const image = stege.hideMessage(res, message);
-  //         // const base64String = btoa(String.fromCharCode(...new Uint8Array(image)));
-  //         const base64String = this.arrayBufferToBase64(image);
-  //         console.log(image);
-  //
-  //         const decodeBase64 = this.base64ToArrayBuffer(base64String);
-  //         const secret = stege.retrieveMessage(decodeBase64);
-  //         console.log("decoded: " + secret);
-  //       },
-  //       error: (err) => {
-  //         console.error(err.message);
-  //       },
-  //     },
-  //   )
-  // }
-
   symmetricEncryption() {
 
     const message = "secret message";
-    const {key} = this.generateSymmetricKey();
+    const { key } = this.generateSymmetricKey();
     const cipher = forge.cipher.createCipher('AES-ECB', key);
     cipher.start();
     cipher.update(forge.util.createBuffer(message));
@@ -128,7 +105,7 @@ export class CryptoService {
 
   withoutHeaderPrivateKey() {
 
-    this.http.get('assets/cert.key', {responseType: 'text'}).subscribe({
+    this.http.get('assets/cert.key', { responseType: 'text' }).subscribe({
         next: (res) => {
 
           const secretMessage = "tajna poruka";
@@ -193,7 +170,7 @@ export class CryptoService {
   }
 
   exportKey() {
-    this.http.get('assets/cert.key', {responseType: 'text'})
+    this.http.get('assets/cert.key', { responseType: 'text' })
       .subscribe(data => {
 
         const ed25519 = forge.pki.ed25519;

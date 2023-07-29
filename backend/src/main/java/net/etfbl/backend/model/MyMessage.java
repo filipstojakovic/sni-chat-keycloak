@@ -1,10 +1,10 @@
-package net.etfbl.backend;
+package net.etfbl.backend.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +14,7 @@ public class MyMessage {
   private String senderName;
   private String receiverName;
   private String message;
-  private LocalDateTime timestamp;
+  private Date timestamp;
 
 //     private Status status;
   // getters and setters

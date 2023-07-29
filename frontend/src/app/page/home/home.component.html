@@ -1,16 +1,44 @@
-<p>home works!</p>
-<input (click)="logout()" type="button" value="logout">
-
-
-<div style="width: 100%; word-wrap: break-word">{{token2}}</div>
-<h3>resource server</h3>
-<div>res: {{res}}</div>
-<div>res1: {{res1}}</div>
-
-
-<mat-selection-list [multiple]="false" >
-<!--  <mat-divider></mat-divider>-->
-  <mat-list-option *ngFor="let item of items" [value]="item">
-    <span class="chat-name">{{ item }}</span>
-  </mat-list-option>
-</mat-selection-list>
+<div class="container">
+  <div class="left-container">
+    <mat-selection-list
+      [multiple]="false"
+      hideSingleSelectionIndicator="true"
+      (selectionChange)="onUserSelectionChange($event)">
+      <mat-list-option
+        *ngFor="let user of availableUsers"
+        [value]="user">
+        {{ user.username}}
+        <!--                {{ user.firstName + " " + user.lastName }}-->
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
+  <div class="right-container" *ngIf="selectedUser">
+    <div class="all-messages-container">
+      <div *ngFor="let message of messages">
+        <p>{{message.senderName}}</p>
+        <p>{{message.receiverName}}</p>
+        <p>{{message.message}}</p>
+        <mat-divider></mat-divider>
+      </div>
+    </div>
+    <div class="type-messages-container">
+      <mat-form-field
+        style="width: 100%;">
+        <textarea
+          #messageTextField
+          matInput
+          placeholder="Write your message...."
+          rows="4"
+          [(ngModel)]="messageText"
+          (keydown.enter)="sendMessage()">
+        </textarea>
+      </mat-form-field>
+      <button color="primary"
+              mat-raised-button
+              style="padding:30px;"
+              (click)="sendMessage()">
+        Send
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-package net.etfbl.backend;
+package net.etfbl.backend.websocketconfig;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
     registry.setApplicationDestinationPrefixes("/api");
-    registry.enableSimpleBroker("/chatroom", "/user");
+    registry.enableSimpleBroker("/user");
     registry.setUserDestinationPrefix("/user");
 
     if (isRabbitMQEnabled) {

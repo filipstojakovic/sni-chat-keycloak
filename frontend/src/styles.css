@@ -9,3 +9,38 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
+
+.mat-mdc-list-base {
+  text-align: center;
+  --mdc-list-list-item-label-text-color: black;
+  --mdc-list-list-item-supporting-text-color: rgba(0, 0, 0, 0.54);
+  --mdc-list-list-item-leading-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-trailing-supporting-text-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-trailing-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-selected-trailing-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-disabled-label-text-color: black;
+  --mdc-list-list-item-disabled-leading-icon-color: black;
+  --mdc-list-list-item-disabled-trailing-icon-color: black;
+  --mdc-list-list-item-hover-label-text-color: rgba(0, 0, 0, 0.87);
+  --mdc-list-list-item-hover-leading-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-hover-trailing-icon-color: rgba(0, 0, 0, 0.38);
+  --mdc-list-list-item-focus-label-text-color: rgba(0, 0, 0, 0.87);
+  --mdc-list-list-item-hover-state-layer-color: green;
+  --mdc-list-list-item-hover-state-layer-opacity: 0.25;
+  --mdc-list-list-item-focus-state-layer-color: green;
+  --mdc-list-list-item-focus-state-layer-opacity: 0.25;
+}
+
+.mdc-list-item.mdc-list-item--selected {
+  background: rgba(0, 128, 0, 0.25) !important;
+}
+
+mat-form-field * {
+  background-color: white !important;
+}
+
+.mat-mdc-form-field-bottom-align {
+  display: none;
+}
+
+/*mat-mdc-list-item mat-mdc-list-option mdc-list-item mat-mdc-list-item-interactive mat-accent mat-mdc-list-item-single-line mdc-list-item--with-one-line ng-star-inserted*/

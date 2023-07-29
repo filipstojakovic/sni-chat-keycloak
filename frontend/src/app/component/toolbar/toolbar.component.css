@@ -1,0 +1,8 @@
+.toolbar {
+  gap: 15px;
+  height: 70px
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

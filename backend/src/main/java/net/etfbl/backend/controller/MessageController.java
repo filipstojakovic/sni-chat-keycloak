@@ -1,11 +1,13 @@
-package net.etfbl.backend;
+package net.etfbl.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.etfbl.backend.CharRoomService;
+import net.etfbl.backend.ChatMessageService;
+import net.etfbl.backend.model.MyMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -25,25 +27,14 @@ public class MessageController {
   /**
    * <a href="https://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-handle-annotations">Websocket annotations</a>
    */
-  @MessageMapping("/message")
-  @SendTo("/chatroom/public")
-  public MyMessage receiveMessage(@Payload MyMessage myMessage,
-                                  StompHeaderAccessor headers,
-                                  JwtAuthenticationToken principal) {
-    log.info("OVO JE ZNAK DA SE VRACA PORUKA: receiveMessage(@Payload Message message){ ");
-    String name = (String) JwtUtil.getClaim(principal, JwtUtil.USERNAME);
-    myMessage.setMessage("OVO JE PORUKA OD SERVERA BURAZ");
-    return myMessage;
-  }
-
   @MessageMapping("/private-message")
-  public MyMessage recMessage(@Payload MyMessage myMessage) {
+  public void privateMessage(@Payload MyMessage myMessage,
+                             StompHeaderAccessor headers,
+                             JwtAuthenticationToken principal) {
 
     log.info("MessageController > private:" + "ovo je na serveru port: " + serverPort);
     myMessage.setMessage(myMessage.getMessage() + " port: " + serverPort);
     simpMessagingTemplate.convertAndSendToUser(myMessage.getReceiverName(), "/private", myMessage); // client listens on /user/{username}/private
-    System.out.println(myMessage.toString());
-    return myMessage;
   }
 
 }

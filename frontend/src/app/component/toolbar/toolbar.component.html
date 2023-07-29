@@ -1,0 +1,8 @@
+<mat-toolbar color="primary" class="toolbar">
+  <span>Secure Chat</span>
+<!--  <button mat-raised-button [routerLink]="frontendPath.HOME">HOME</button>-->
+<!--  <button mat-raised-button [routerLink]="frontendPath.CHAT_ROOM">CHAT ROOM</button>-->
+  <span class="spacer"></span>
+  <span>{{getLoggedUserName()}}</span>
+  <button mat-raised-button (click)="logout()">Logout</button>
+</mat-toolbar>

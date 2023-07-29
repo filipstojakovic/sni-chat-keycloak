@@ -1,7 +1,8 @@
-package net.etfbl.backend;
+package net.etfbl.backend.websocketconfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.etfbl.backend.util.JwtUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

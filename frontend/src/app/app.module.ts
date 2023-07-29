@@ -1,6 +1,5 @@
 import {APP_INITIALIZER, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
-
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular';
@@ -8,18 +7,18 @@ import {initializeKeycloak} from './auth/initKeycloak';
 import {HomeComponent} from './page/home/home.component';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ChatRoomComponent} from './page/chat-room/chat-room.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {StompServiceService} from './stomp-service.service';
+import {StompService} from './stomp.service';
 import {CryptoService} from './service/crypto.service';
 import {UserService} from './service/user.service';
 import {MaterialModule} from '../material.module';
+import {ToolbarComponent} from './component/toolbar/toolbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ChatRoomComponent,
+    ToolbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -38,7 +37,7 @@ import {MaterialModule} from '../material.module';
       multi: true,
       deps: [KeycloakService],
     },
-    StompServiceService,
+    StompService,
     CryptoService,
     UserService,
   ],
