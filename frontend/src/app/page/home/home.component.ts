@@ -6,6 +6,7 @@ import {UserService} from '../../service/user.service';
 import {User} from '../../model/user';
 import {StompService} from '../../stomp.service';
 import {Message} from '../../model/message';
+import {MessageService} from '../../service/message.service';
 
 @Component({
   selector: 'app-home',
@@ -14,11 +15,10 @@ import {Message} from '../../model/message';
 })
 export class HomeComponent implements OnInit {
 
-  @ViewChild("messageTextField") messageTextFieldElement : ElementRef;
+  @ViewChild("messageTextField") messageTextFieldElement: ElementRef;
   availableUsers: User[] = []
   selectedUser: User | null = null;
-
-  messages: Message[] = [];
+  currentUserMessages: Message[];
 
   messageText: string = "";
 
@@ -27,6 +27,7 @@ export class HomeComponent implements OnInit {
               private http: HttpClient,
               private userService: UserService,
               private stompService: StompService,
+              private messageService: MessageService,
   ) {
   }
 
@@ -41,8 +42,9 @@ export class HomeComponent implements OnInit {
     const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
     this.stompService.subscribe(8080, userMessagesUrl, (message) => {
       const mess: Message = JSON.parse(message.body);
-      console.log("private message: " + JSON.stringify(mess, null, 2));
-      this.messages.unshift(mess);
+      console.log("receiving private message: " + JSON.stringify(mess, null, 2));
+      this.messageService.addMessage(mess);
+      this.currentUserMessages.unshift(mess);
       // this.messages.unshift(mess);
     });
 
@@ -64,8 +66,15 @@ export class HomeComponent implements OnInit {
     // )
   }
 
+  get selectedUserMessages(): Message[] {
+    if (this.selectedUser)
+      return this.messageService.findUserMessages(this.selectedUser.username);
+    return [];
+  }
+
   onUserSelectionChange(event: any) {
     this.selectedUser = event.options[0].value;
+    this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username);
   }
 
   sendMessage() {
@@ -78,7 +87,8 @@ export class HomeComponent implements OnInit {
 
     const loggedInUser = this.authService.getUsername();
     const message = new Message(this.messageText, loggedInUser, this.selectedUser.username);
-    this.messages.unshift(message);
+    this.messageService.addMessage(message);
+    this.currentUserMessages.unshift(message);
     this.stompService.sendMessage(8080, "/api/private-message", JSON.stringify(message));
     console.log("home.component.ts > sendMessage(): " + JSON.stringify(message, null, 2));
     this.messageText = "";

@@ -19,6 +19,7 @@ export class ToolbarComponent {
   }
 
   getLoggedUserName() {
-    return this.authService.getFullName();
+    // return this.authService.getFullName();
+    return this.authService.getUsername();
   }
 }

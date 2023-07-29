@@ -14,7 +14,7 @@
   </div>
   <div class="right-container" *ngIf="selectedUser">
     <div class="all-messages-container">
-      <div *ngFor="let message of messages">
+      <div *ngFor="let message of selectedUserMessages">
         <p>{{message.senderName}}</p>
         <p>{{message.receiverName}}</p>
         <p>{{message.message}}</p>

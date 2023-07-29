@@ -13,6 +13,7 @@ import {CryptoService} from './service/crypto.service';
 import {UserService} from './service/user.service';
 import {MaterialModule} from '../material.module';
 import {ToolbarComponent} from './component/toolbar/toolbar.component';
+import {MessageService} from './service/message.service';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import {ToolbarComponent} from './component/toolbar/toolbar.component';
     StompService,
     CryptoService,
     UserService,
+    MessageService,
   ],
   bootstrap: [AppComponent],
 })
