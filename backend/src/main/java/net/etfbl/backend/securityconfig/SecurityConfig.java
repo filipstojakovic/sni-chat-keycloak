@@ -7,12 +7,12 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,10 +26,10 @@ public class SecurityConfig {
   protected SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 //     http.cors(Customizer.withDefaults())
     http.cors(c -> c.configurationSource(corsConfigurationSource))
-      .csrf(AbstractHttpConfigurer::disable)
+      .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())) // store csrf token i cookie
       .authorizeHttpRequests(r -> {
-          r.requestMatchers("/favicon.ico", "/api/ws/**", "/error").permitAll();
-          r.requestMatchers("/test/*").permitAll();
+          r.requestMatchers("/api/ws/**").permitAll();
+          r.requestMatchers("/test/*").permitAll(); //TODO: delete me
           r.anyRequest().authenticated();
         }
       )

@@ -14,6 +14,10 @@ import {UserService} from './service/user.service';
 import {MaterialModule} from '../material.module';
 import {ToolbarComponent} from './component/toolbar/toolbar.component';
 import {MessageService} from './service/message.service';
+import {UtilService} from './service/util.service';
+import {StegeService} from './service/stege.service';
+import {SymmetricService} from './service/symmetric.service';
+import {AsymmetricService} from './service/asymmetric.service';
 
 @NgModule({
   declarations: [
@@ -42,6 +46,10 @@ import {MessageService} from './service/message.service';
     CryptoService,
     UserService,
     MessageService,
+    UtilService,
+    StegeService,
+    SymmetricService,
+    AsymmetricService,
   ],
   bootstrap: [AppComponent],
 })

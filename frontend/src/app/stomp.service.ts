@@ -19,7 +19,7 @@ export class StompService {
 
     const socket = new SockJS(url);
     const stompClient = Stomp.over(socket);
-    // this.stompClient.debug = null //TODO: disable logs
+    stompClient.debug = null //TODO: disable logs
     this.stompClientMap.set(port, stompClient);
   }
 

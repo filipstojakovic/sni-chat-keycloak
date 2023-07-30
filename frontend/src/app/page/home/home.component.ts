@@ -1,12 +1,15 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
-import {HttpClient} from '@angular/common/http';
 import {CryptoService} from '../../service/crypto.service';
 import {UserService} from '../../service/user.service';
 import {User} from '../../model/user';
 import {StompService} from '../../stomp.service';
 import {Message} from '../../model/message';
 import {MessageService} from '../../service/message.service';
+import {environment} from '../../../environments/environment.development';
+import {StegeService} from '../../service/stege.service';
+import {AsymmetricService} from '../../service/asymmetric.service';
+import {SymmetricService} from '../../service/symmetric.service';
 
 @Component({
   selector: 'app-home',
@@ -24,46 +27,37 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private cryptoService: CryptoService,
-              private http: HttpClient,
+              private asymmetric: AsymmetricService,
+              private symmetric: SymmetricService,
               private userService: UserService,
               private stompService: StompService,
               private messageService: MessageService,
+              private stege: StegeService,
   ) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.userService.getAllUsers().subscribe(users => {
       this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
     });
 
-    this.stompService.connect(8080);
+    environment.resourceServersPorts.forEach(port => {
+      this.stompService.connect(port);
+      //private stuff
+      const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
+      this.stompService.subscribe(port, userMessagesUrl, (message) => {
+        const mess: Message = JSON.parse(message.body);
+        console.log("receiving private message: " + JSON.stringify(mess, null, 2));
+        this.messageService.addMessage(mess);
+        this.currentUserMessages.unshift(mess);
+        // this.messages.unshift(mess);
+      });
+    })
 
-    //private stuff
-    const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-    this.stompService.subscribe(8080, userMessagesUrl, (message) => {
-      const mess: Message = JSON.parse(message.body);
-      console.log("receiving private message: " + JSON.stringify(mess, null, 2));
-      this.messageService.addMessage(mess);
-      this.currentUserMessages.unshift(mess);
-      // this.messages.unshift(mess);
-    });
+    await this.asymmetric.loadCerts();
+    this.asymmetric.test("message is secret");
 
-    // this.cryptoService.symmetricEncryption();
-    // this.cryptoService.withoutHeaderPrivateKey();
-    // this.cryptoService.exportKey();
-    // this.cryptoService.imageEncryptV2();
-
-
-    // this.http.get("/api1/test",{responseType: 'text'}).subscribe({
-    //       next: (res) => {
-    //         console.log("home.component.ts > next(): "+ JSON.stringify(res, null, 2));
-    //         this.res1 = JSON.stringify(res);
-    //       },
-    //       error: (err) => {
-    //         console.log("error(): res1: "+ err.message);
-    //       },
-    //     },
-    // )
+    // this.symmetric.testSymmetricEncryption()
   }
 
   get selectedUserMessages(): Message[] {
@@ -77,13 +71,14 @@ export class HomeComponent implements OnInit {
     this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username);
   }
 
-  sendMessage() {
+  sendMessage(event: any) {
     if (this.messageText.trim() === '') {
       return;
     }
     if (this.selectedUser == null) {
       return;
     }
+    event.preventDefault();
 
     const loggedInUser = this.authService.getUsername();
     const message = new Message(this.messageText, loggedInUser, this.selectedUser.username);

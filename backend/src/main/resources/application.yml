@@ -31,9 +31,9 @@ app:
     allowedOrigins: http://localhost:4200, https://localhost:4200, http://localhost:9000, https://localhost:9001
 
 server:
-  port: 8080
+  port: ${PORT:8080}
   ssl:
-    enabled: true
+    enabled: ${SSL_ENABLE:true}
     key-alias: chatapp
     key-store: classpath:certs/keystore.p12
     key-store-type: pkcs12

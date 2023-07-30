@@ -5,7 +5,7 @@ export function initializeKeycloak(keycloak: KeycloakService) {
   return () =>
     keycloak.init({
       config: {
-        url: environment.authServer,
+        url: `http://localhost:${environment.authServerPort}`,
         realm: environment.realm,
         clientId: environment.clientId,
       },

@@ -34,7 +34,6 @@ services:
     volumes:
       - ./certs/:/opt/bitnami/keycloak/certs
       - ./realms/:/opt/bitnami/keycloak/data/my-realms
-
     depends_on:
       - postgres
 

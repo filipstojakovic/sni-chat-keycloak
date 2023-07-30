@@ -14,7 +14,7 @@ export class UserService {
   }
 
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(environment.authServer + "/admin/realms/my-realm/users")
+    return this.http.get<User[]>(`http://localhost:${environment.authServerPort}/admin/realms/my-realm/users`)
       .pipe(map(users => users.map(user => new User(user.username, user.firstName, user.lastName))),
       );
   }

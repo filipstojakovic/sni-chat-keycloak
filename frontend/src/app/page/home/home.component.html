@@ -30,13 +30,13 @@
           placeholder="Write your message...."
           rows="4"
           [(ngModel)]="messageText"
-          (keydown.enter)="sendMessage()">
+          (keydown.enter)="sendMessage($event)">
         </textarea>
       </mat-form-field>
       <button color="primary"
               mat-raised-button
               style="padding:30px;"
-              (click)="sendMessage()">
+              (click)="sendMessage($event)">
         Send
       </button>
     </div>
