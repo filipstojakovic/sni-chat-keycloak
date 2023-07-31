@@ -47,7 +47,7 @@ export class StompService {
   private subscribeToTopic(port: number, topic: string, callback: any) {
     const stompClient = this.stompClientMap.get(port);
     stompClient.subscribe(topic, (payload): any => {
-      callback(payload);
+      callback(payload); // maybe call callback(payload.body);
     })
   }
 

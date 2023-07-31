@@ -39,6 +39,7 @@ public class BeforeSocketHandshakeInterceptor implements HandshakeInterceptor {
     Authentication authentication = JwtUtil.getAuthenticationFromToken(token, jwtDecoder);
     SecurityContextHolder.getContext().setAuthentication(authentication);
 
+    log.info("BeforeSocketHandshakeInterceptor > beforeHandshake() username: " + JwtUtil.getClaim(authentication, JwtUtil.USERNAME));
     return true;
   }
 

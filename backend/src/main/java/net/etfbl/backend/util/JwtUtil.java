@@ -30,6 +30,10 @@ public class JwtUtil {
     return map.get(claimName);
   }
 
+  public static String getUsername(JwtAuthenticationToken principal) {
+    return (String) JwtUtil.getClaim(principal, USERNAME);
+  }
+
   public static Authentication getAuthenticationFromToken(String token, JwtDecoder jwtDecoder) {
     Jwt jwt = jwtDecoder.decode(token);
     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

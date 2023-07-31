@@ -14,14 +14,20 @@
   </div>
   <div class="right-container" *ngIf="selectedUser">
     <div class="all-messages-container">
-      <div *ngFor="let message of selectedUserMessages">
-        <p>{{message.senderName}}</p>
-        <p>{{message.receiverName}}</p>
-        <p>{{message.message}}</p>
+      <div *ngFor="let message of currentUserMessages"
+           [ngClass]="{
+              'message-container': true,
+              'message-from-me': message.senderName === currentLoggedInUser,
+              'message-from-others': message.senderName !== currentLoggedInUser
+            }"
+      >
+        <div>{{message.senderName}}</div>
+        <div>{{message.receiverName}}</div>
+        <span>{{message.message}}</span>
         <mat-divider></mat-divider>
       </div>
     </div>
-    <div class="type-messages-container">
+    <div class="textarea-messages-container">
       <mat-form-field
         style="width: 100%;">
         <textarea

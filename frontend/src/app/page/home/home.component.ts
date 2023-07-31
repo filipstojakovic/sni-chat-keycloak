@@ -4,12 +4,16 @@ import {CryptoService} from '../../service/crypto.service';
 import {UserService} from '../../service/user.service';
 import {User} from '../../model/user';
 import {StompService} from '../../stomp.service';
-import {Message} from '../../model/message';
+import {SocketMessagePart} from '../../model/socketMessagePart';
 import {MessageService} from '../../service/message.service';
 import {environment} from '../../../environments/environment.development';
 import {StegeService} from '../../service/stege.service';
 import {AsymmetricService} from '../../service/asymmetric.service';
 import {SymmetricService} from '../../service/symmetric.service';
+import {UtilService} from '../../service/util.service';
+import {v4 as uuid} from 'uuid';
+import {ChatMessage} from '../../model/chatMessage';
+import * as Stomp from 'stompjs'
 
 @Component({
   selector: 'app-home',
@@ -21,7 +25,7 @@ export class HomeComponent implements OnInit {
   @ViewChild("messageTextField") messageTextFieldElement: ElementRef;
   availableUsers: User[] = []
   selectedUser: User | null = null;
-  currentUserMessages: Message[];
+  currentUserMessages: ChatMessage[];
 
   messageText: string = "";
 
@@ -33,37 +37,34 @@ export class HomeComponent implements OnInit {
               private stompService: StompService,
               private messageService: MessageService,
               private stege: StegeService,
+              private util: UtilService,
   ) {
   }
 
   async ngOnInit() {
+    await this.asymmetric.loadCerts();
+
     this.userService.getAllUsers().subscribe(users => {
       this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
     });
 
+    this.messageService.newMessageEmitter.subscribe((chatMessage) => {
+      this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username)
+    })
+
     environment.resourceServersPorts.forEach(port => {
       this.stompService.connect(port);
-      //private stuff
       const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-      this.stompService.subscribe(port, userMessagesUrl, (message) => {
-        const mess: Message = JSON.parse(message.body);
-        console.log("receiving private message: " + JSON.stringify(mess, null, 2));
-        this.messageService.addMessage(mess);
-        this.currentUserMessages.unshift(mess);
-        // this.messages.unshift(mess);
+
+      this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
+        const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
+        this.messageService.addMessagePart(socketMessagePart);
       });
     })
 
-    await this.asymmetric.loadCerts();
-    this.asymmetric.test("message is secret");
 
+    // this.asymmetric.test("message is secret");
     // this.symmetric.testSymmetricEncryption()
-  }
-
-  get selectedUserMessages(): Message[] {
-    if (this.selectedUser)
-      return this.messageService.findUserMessages(this.selectedUser.username);
-    return [];
   }
 
   onUserSelectionChange(event: any) {
@@ -72,21 +73,35 @@ export class HomeComponent implements OnInit {
   }
 
   sendMessage(event: any) {
+    event.preventDefault();
     if (this.messageText.trim() === '') {
       return;
     }
     if (this.selectedUser == null) {
       return;
     }
-    event.preventDefault();
 
-    const loggedInUser = this.authService.getUsername();
-    const message = new Message(this.messageText, loggedInUser, this.selectedUser.username);
-    this.messageService.addMessage(message);
-    this.currentUserMessages.unshift(message);
-    this.stompService.sendMessage(8080, "/api/private-message", JSON.stringify(message));
-    console.log("home.component.ts > sendMessage(): " + JSON.stringify(message, null, 2));
+    const id = uuid();
+    const chatMessage = new ChatMessage(id, this.currentLoggedInUser, this.selectedUser.username, this.messageText);
+
+    const messageParts: string[] = this.util.divideStringRandomly(this.messageText);
+
+    messageParts.forEach((currentMessagePart, index) => {
+      const serverPort = index % environment.resourceServersPorts.length;
+      const socketMessagePart = new SocketMessagePart(id, currentMessagePart, this.currentLoggedInUser, this.selectedUser.username, index, messageParts.length)
+      this.stompService.sendMessage(
+        environment.resourceServersPorts[serverPort],
+        "/api/private-message",
+        JSON.stringify(socketMessagePart));
+    })
+
+    this.messageService.addChatMessage(chatMessage);
+
     this.messageText = "";
     this.messageTextFieldElement.nativeElement.focus();
+  }
+
+  get currentLoggedInUser(): string {
+    return this.authService.getUsername();
   }
 }
