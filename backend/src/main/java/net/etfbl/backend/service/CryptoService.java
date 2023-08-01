@@ -31,7 +31,7 @@ public class CryptoService {
 
     try {
       CertificateFactory factory = CertificateFactory.getInstance(X_509);
-      File file = ResourceUtils.getFile("classpath:certs/" + username + ".pem");
+      File file = ResourceUtils.getFile("classpath:certs/" + username + ".crt");
       return (X509Certificate) factory.generateCertificate(new FileInputStream(file));
 
     } catch (FileNotFoundException ex) {
@@ -78,6 +78,8 @@ public class CryptoService {
 
       byte[] data = Base64.getDecoder().decode(dataBase64);
       byte[] signature = Base64.getDecoder().decode(signatureBase64);
+
+      String asd = new String(AsymmetricEncryption.decryptWithKey(data,publicKey));
 
       Signature sig = Signature.getInstance(certificate.getSigAlgName());
       sig.initVerify(publicKey);

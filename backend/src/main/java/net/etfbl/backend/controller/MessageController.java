@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.etfbl.backend.exception.UnAuthorizedException;
 import net.etfbl.backend.model.KeyExchangeRequest;
 import net.etfbl.backend.model.SocketMessagePart;
+import net.etfbl.backend.service.AsymmetricEncryption;
 import net.etfbl.backend.service.CryptoService;
 import net.etfbl.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,10 +38,17 @@ public class MessageController {
   @ResponseBody
   @PostMapping("api/key-exchange")
   public ResponseEntity<Void> keyExchange(@RequestBody KeyExchangeRequest keyExchangeRequest,
-                                    @AuthenticationPrincipal JwtAuthenticationToken principal) {
+                                          @AuthenticationPrincipal JwtAuthenticationToken principal) throws Exception {
 
     var privateKey = cryptoService.loadUserPrivateKey("user");
-    //var isValid = cryptoService.verifySignature()
+    var message = "qwerty";
+    var signature = AsymmetricEncryption.encryptWithKey(message.getBytes(), privateKey);
+    var cert = cryptoService.loadUserCertificate("user");
+    var pubKey = cert.getPublicKey();
+
+    var decrypt = AsymmetricEncryption.decryptWithKey(signature,pubKey);
+
+    var asd = new String(decrypt);
     return ResponseEntity.ok().body(null);
   }
 
