@@ -7,6 +7,7 @@ import net.etfbl.backend.model.KeyExchangeRequest;
 import net.etfbl.backend.model.SocketMessagePart;
 import net.etfbl.backend.service.AsymmetricEncryption;
 import net.etfbl.backend.service.CryptoService;
+import net.etfbl.backend.util.Base64Util;
 import net.etfbl.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -42,11 +43,14 @@ public class MessageController {
 
     var privateKey = cryptoService.loadUserPrivateKey("user");
     var message = "qwerty";
-    var signature = AsymmetricEncryption.encryptWithKey(message.getBytes(), privateKey);
+    var signatureBytes = AsymmetricEncryption.encryptWithKey(message.getBytes(), privateKey);
+    var signatureBase64 = Base64Util.encodeToString(signatureBytes);
+
     var cert = cryptoService.loadUserCertificate("user");
     var pubKey = cert.getPublicKey();
 
-    var decrypt = AsymmetricEncryption.decryptWithKey(signature,pubKey);
+    var signatureDecodedBytes = Base64Util.decode(signatureBase64);
+    var decrypt = AsymmetricEncryption.decryptWithKey(signatureDecodedBytes,pubKey);
 
     var asd = new String(decrypt);
     return ResponseEntity.ok().body(null);

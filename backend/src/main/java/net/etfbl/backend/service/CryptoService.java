@@ -79,9 +79,7 @@ public class CryptoService {
       byte[] data = Base64.getDecoder().decode(dataBase64);
       byte[] signature = Base64.getDecoder().decode(signatureBase64);
 
-      String asd = new String(AsymmetricEncryption.decryptWithKey(data,publicKey));
-
-      Signature sig = Signature.getInstance(certificate.getSigAlgName());
+      Signature sig = Signature.getInstance("SHA256WithRSA");//(certificate.getSigAlgName());
       sig.initVerify(publicKey);
       sig.update(data);
 
