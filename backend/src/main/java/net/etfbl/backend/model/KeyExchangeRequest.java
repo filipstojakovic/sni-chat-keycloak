@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatRoomKey {
+public class KeyExchangeRequest {
 
-  private String chatRoomId;
-  private String encryptedByUser;
-  private String encryptedSymmetricKey;
+  private String signedBy;
+  private String encryptedSymmetricKeyBase64;
+  private String signatureBase64;
 }

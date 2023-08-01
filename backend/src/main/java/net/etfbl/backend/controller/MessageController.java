@@ -2,12 +2,13 @@ package net.etfbl.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.etfbl.backend.ChatRoomService;
 import net.etfbl.backend.exception.UnAuthorizedException;
-import net.etfbl.backend.model.ChatRoomKey;
+import net.etfbl.backend.model.KeyExchangeRequest;
 import net.etfbl.backend.model.SocketMessagePart;
+import net.etfbl.backend.service.CryptoService;
 import net.etfbl.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -15,25 +16,32 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
 public class MessageController {
 
-  private final SimpMessagingTemplate simpMessagingTemplate;
-  private final ChatRoomService chatRoomService;
   @Value("${server.port}")
   private int serverPort;
+  private final SimpMessagingTemplate simpMessagingTemplate;
+  private Map<String, String> symmetricKeyMap = new HashMap<>();
+  private final CryptoService cryptoService;
 
-  @PostMapping("api/message/{username}")
-  private ChatRoomKey createRoomCode(@PathVariable String username,
-                                     @AuthenticationPrincipal JwtAuthenticationToken principal) {
+  @ResponseBody
+  @PostMapping("api/key-exchange")
+  public ResponseEntity<Void> keyExchange(@RequestBody KeyExchangeRequest keyExchangeRequest,
+                                    @AuthenticationPrincipal JwtAuthenticationToken principal) {
 
-    String chatRoomId = chatRoomService.createChatRoomId(username, JwtUtil.getUsername(principal));
-    return null;
+    var privateKey = cryptoService.loadUserPrivateKey("user");
+    //var isValid = cryptoService.verifySignature()
+    return ResponseEntity.ok().body(null);
   }
 
   /**

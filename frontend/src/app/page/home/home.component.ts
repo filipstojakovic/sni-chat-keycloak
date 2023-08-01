@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.asymmetric.loadCerts();
+    await this.asymmetric.loadCerts(); //TODO: load just root cert
 
     this.userService.getAllUsers().subscribe(users => {
       this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
       });
     })
 
-
+    console.log("home.component.ts > token: "+ this.authService.getToken());
     // this.asymmetric.test("message is secret");
     // this.symmetric.testSymmetricEncryption()
   }
@@ -70,6 +70,7 @@ export class HomeComponent implements OnInit {
   onUserSelectionChange(event: any) {
     this.selectedUser = event.options[0].value;
     this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username);
+
   }
 
   sendMessage(event: any) {
