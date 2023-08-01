@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class KeyExchangeRequest {
 
-  private String signedBy;
   private String encryptedSymmetricKeyBase64;
   private String signatureBase64;
 }

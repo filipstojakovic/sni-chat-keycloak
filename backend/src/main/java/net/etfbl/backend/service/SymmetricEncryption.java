@@ -12,6 +12,8 @@ public class SymmetricEncryption {
 
   public static final String AES = "AES";
 
+
+
   public SecretKey generateSecretKey(String key, String symmetricAlgo) {
     return new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), symmetricAlgo);
   }

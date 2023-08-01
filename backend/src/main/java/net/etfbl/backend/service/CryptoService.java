@@ -11,10 +11,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -35,10 +39,10 @@ public class CryptoService {
       return (X509Certificate) factory.generateCertificate(new FileInputStream(file));
 
     } catch (FileNotFoundException ex) {
-      log.error("error loading certificate file");
+      log.error("CryptoService > loadUserCertificate() :" + "error loading certificate file");
       throw new BadRequestException("Certificate not found");
     } catch (CertificateException ex) {
-      log.error("error loading certificate factory instance");
+      log.error("CryptoService > loadUserCertificate() :" + "error loading certificate factory instance");
       throw new BadRequestException("Certificate type not found");
     }
   }
@@ -66,27 +70,45 @@ public class CryptoService {
         return factory.generatePrivate(privateKeySpec);
       }
     } catch (Exception ex) {
-      log.error("Error Loading private key");
+      log.error("CryptoService > loadUserPrivateKey() :" + "Error loading private key");
+      throw new BadRequestException("Error loading private key");
     }
-    return null;
   }
 
-  public boolean verifySignature(String dataBase64, String signatureBase64, String user) {
+  public boolean verifySignature(byte[] data, String signatureBase64, String user) {
     try {
+      byte[] signature = Base64.getDecoder().decode(signatureBase64);
       var certificate = loadUserCertificate(user);
       PublicKey publicKey = certificate.getPublicKey();
-
-      byte[] data = Base64.getDecoder().decode(dataBase64);
-      byte[] signature = Base64.getDecoder().decode(signatureBase64);
-
-      Signature sig = Signature.getInstance(certificate.getSigAlgName());
+      Signature sig = Signature.getInstance(certificate.getSigAlgName()); // certificate.getSigAlgName() here is always SHA256withRSA
       sig.initVerify(publicKey);
       sig.update(data);
 
       return sig.verify(signature);
     } catch (Exception e) {
-      log.error("Error verifying the signature");
+      log.error("CryptoService > verifySignature() :" + "Error verifying the signature");
       return false;
+    }
+  }
+
+  public boolean verifySignature(String dataBase64, String signatureBase64, String user) {
+    byte[] data = Base64.getDecoder().decode(dataBase64);
+    return verifySignature(data, signatureBase64, user);
+  }
+
+  public String createSignature(String dataToSign, PrivateKey privateKey) {
+    try {
+      Signature signature = Signature.getInstance("SHA256withRSA");
+      signature.initSign(privateKey);
+
+      byte[] dataBytes = dataToSign.getBytes(StandardCharsets.UTF_8);
+      signature.update(dataBytes);
+
+      byte[] digitalSignature = signature.sign();
+
+      return Base64.getEncoder().encodeToString(digitalSignature);
+    } catch (NoSuchAlgorithmException | SignatureException | InvalidKeyException e) {
+      throw new RuntimeException(e);
     }
   }
 }
