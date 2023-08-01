@@ -29,7 +29,7 @@ public class SecurityConfig {
       .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())) // store csrf token i cookie
       .authorizeHttpRequests(r -> {
           r.requestMatchers("/api/ws/**").permitAll();
-          r.requestMatchers("/test/*").permitAll(); //TODO: delete me
+          r.requestMatchers("/test/*").permitAll(); // TODO: delete me
           r.anyRequest().authenticated();
         }
       )

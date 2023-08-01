@@ -35,10 +35,10 @@ public class CryptoService {
       return (X509Certificate) factory.generateCertificate(new FileInputStream(file));
 
     } catch (FileNotFoundException ex) {
+      log.error("error loading certificate file");
       throw new BadRequestException("Certificate not found");
     } catch (CertificateException ex) {
       log.error("error loading certificate factory instance");
-      ex.printStackTrace();
       throw new BadRequestException("Certificate type not found");
     }
   }
@@ -66,7 +66,7 @@ public class CryptoService {
         return factory.generatePrivate(privateKeySpec);
       }
     } catch (Exception ex) {
-      ex.printStackTrace();
+      log.error("Error Loading private key");
     }
     return null;
   }
@@ -79,14 +79,13 @@ public class CryptoService {
       byte[] data = Base64.getDecoder().decode(dataBase64);
       byte[] signature = Base64.getDecoder().decode(signatureBase64);
 
-      Signature sig = Signature.getInstance("SHA256WithRSA");//(certificate.getSigAlgName());
+      Signature sig = Signature.getInstance(certificate.getSigAlgName());
       sig.initVerify(publicKey);
       sig.update(data);
 
-      // Verify the signature
       return sig.verify(signature);
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("Error verifying the signature");
       return false;
     }
   }

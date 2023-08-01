@@ -1,5 +1,6 @@
 package net.etfbl.backend.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class Base64Util {
@@ -9,11 +10,11 @@ public class Base64Util {
   }
 
   public static String encodeToString(String data) {
-    return encodeToString(data.getBytes());
+    return encodeToString(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public static byte[] encode(String data) {
-    return Base64.getEncoder().encode(data.getBytes());
+    return Base64.getEncoder().encode(data.getBytes(StandardCharsets.UTF_8));
   }
 
   public static String decodeToString(String base64Data) {
@@ -25,7 +26,7 @@ public class Base64Util {
   }
 
   public static byte[] decode(String base64Data) {
-    return decode(base64Data.getBytes());
+    return decode(base64Data.getBytes(StandardCharsets.UTF_8));
   }
 
   public static byte[] decode(byte[] base64Data) {
