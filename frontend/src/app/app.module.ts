@@ -9,7 +9,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {StompService} from './stomp.service';
-import {CryptoService} from './service/crypto.service';
 import {UserService} from './service/user.service';
 import {MaterialModule} from '../material.module';
 import {ToolbarComponent} from './component/toolbar/toolbar.component';
@@ -43,7 +42,6 @@ import {AsymmetricService} from './service/asymmetric.service';
       deps: [KeycloakService],
     },
     StompService,
-    CryptoService,
     UserService,
     MessageService,
     UtilService,

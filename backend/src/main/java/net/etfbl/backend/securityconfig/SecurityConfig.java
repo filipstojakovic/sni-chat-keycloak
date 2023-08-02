@@ -25,11 +25,11 @@ public class SecurityConfig {
   @Bean
   protected SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
 //     http.cors(Customizer.withDefaults())
-    http.cors(c -> c.configurationSource(corsConfigurationSource))
+    http
+      .cors(c -> c.configurationSource(corsConfigurationSource))
       .csrf(c -> c.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())) // store csrf token i cookie
       .authorizeHttpRequests(r -> {
           r.requestMatchers("/api/ws/**").permitAll();
-          r.requestMatchers("/test/*").permitAll(); // TODO: delete me
           r.anyRequest().authenticated();
         }
       )

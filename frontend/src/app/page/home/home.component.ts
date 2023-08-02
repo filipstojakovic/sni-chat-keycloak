@@ -1,6 +1,5 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
-import {CryptoService} from '../../service/crypto.service';
 import {UserService} from '../../service/user.service';
 import {User} from '../../model/user';
 import {StompService} from '../../stomp.service';
@@ -30,7 +29,6 @@ export class HomeComponent implements OnInit {
   messageText: string = "";
 
   constructor(private authService: AuthService,
-              private cryptoService: CryptoService,
               private asymmetric: AsymmetricService,
               private symmetric: SymmetricService,
               private userService: UserService,
@@ -53,18 +51,14 @@ export class HomeComponent implements OnInit {
     })
 
     environment.resourceServersPorts.forEach(port => {
+      this.messageService.exchangeKeysWithServer(port);
       this.stompService.connect(port);
       const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-
       this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
         const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
         this.messageService.addMessagePart(socketMessagePart);
       });
     })
-
-    console.log("home.component.ts > token: "+ this.authService.getToken());
-    // this.asymmetric.test("message is secret");
-    // this.symmetric.testSymmetricEncryption()
   }
 
   onUserSelectionChange(event: any) {
