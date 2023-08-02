@@ -3,11 +3,11 @@ export const environment = {
 
   realm: 'my-realm',
   clientId: 'frontend',
-  authServerPort: 9000,
   baseUrl: 'https://localhost',
+  authServerPort: 9000,
   resourceServersPorts: [
     8080,
-    8081,
+    // 8081,
     // 8082,
     // 8083,
   ],

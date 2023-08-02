@@ -1,13 +1,19 @@
 import {Injectable} from '@angular/core';
 import forge from 'node-forge';
+import {UtilService} from './util.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SymmetricService {
 
+
+  constructor(private util: UtilService) {
+  }
+
   generateSymmetricKey() {
-    const symmetricKey = forge.random.getBytesSync(16);
+    // const symmetricKey:string = forge.random.getBytesSync(16).toString();
+    const symmetricKey:string = this.util.generateRandomString(16);
     const iv = forge.random.getBytesSync(8);
     return { symmetricKey, iv };
   }
