@@ -17,7 +17,8 @@
               "base64-js",
               "js-sha256",
               "sockjs-client",
-              "stompjs"
+              "stompjs",
+              "node-forge"
             ],
             "outputPath": "dist/frontend",
             "index": "src/index.html",

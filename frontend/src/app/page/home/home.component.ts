@@ -59,10 +59,7 @@ export class HomeComponent implements OnInit {
       this.stompService.connect(port);
       this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
         const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
-        const symmetricKey = this.keyExchangeService.getSessionKey(port);
-        const decryptedMessagePart = this.symmetric.decryptMessage(socketMessagePart.messagePart,symmetricKey);
-        console.log("home.component.ts > decryptedMessagePart(): "+ decryptedMessagePart);
-        socketMessagePart.messagePart = decryptedMessagePart;
+        this.messageService.decryptMessagePart(socketMessagePart,port);
         this.messageService.addMessagePart(socketMessagePart);
       });
     })

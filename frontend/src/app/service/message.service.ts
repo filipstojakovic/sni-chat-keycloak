@@ -67,5 +67,9 @@ export class MessageService {
     return encryptedBase64MessagePart;
   }
 
-
+  decryptMessagePart(socketMessagePart: SocketMessagePart, port: number) {
+    const symmetricKey = this.keyExchangeService.getSessionKey(port);
+    const decryptedMessagePart = this.symmetric.decryptMessage(socketMessagePart.messagePart, symmetricKey);
+    socketMessagePart.messagePart = decryptedMessagePart;
+  }
 }
