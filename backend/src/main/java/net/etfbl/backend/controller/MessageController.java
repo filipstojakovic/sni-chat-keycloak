@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.etfbl.backend.exception.UnAuthorizedException;
 import net.etfbl.backend.model.SocketMessagePart;
-import net.etfbl.backend.util.JwtUtil;
+import net.etfbl.backend.service.MessageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,6 +22,7 @@ public class MessageController {
   private int serverPort;
 
   private final SimpMessagingTemplate simpMessagingTemplate;
+  private final MessageService messageService;
 
   /**
    * <a href="https://docs.spring.io/spring-framework/docs/4.2.3.RELEASE/spring-framework-reference/html/websocket.html#websocket-stomp-handle-annotations">Websocket annotations</a>
@@ -30,15 +31,17 @@ public class MessageController {
   public void privateMessage(@Payload SocketMessagePart socketMessagePart,
                              StompHeaderAccessor headers,
                              JwtAuthenticationToken principal) {
-    if (principal == null) {
-      throw new UnAuthorizedException("user not authorized");
-    }
     log.info("""
       MessageController > privateMessage:
       sender: {}
       receiver: {}
       port: {}""", socketMessagePart.getSenderName(), socketMessagePart.getReceiverName(), serverPort);
-    socketMessagePart.setSenderName((String) JwtUtil.getClaim(principal, JwtUtil.USERNAME));
+
+    if (principal == null) {
+      throw new UnAuthorizedException("User not authorized");
+    }
+
+    socketMessagePart = messageService.swapSenderReceiverMessageEncryption(socketMessagePart, principal);
     simpMessagingTemplate.convertAndSendToUser(socketMessagePart.getReceiverName(), "/private", socketMessagePart); // client listens on /user/{username}/private
   }
 

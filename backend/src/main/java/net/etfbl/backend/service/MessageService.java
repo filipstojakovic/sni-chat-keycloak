@@ -3,53 +3,45 @@ package net.etfbl.backend.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.etfbl.backend.exception.BadRequestException;
-import net.etfbl.backend.model.KeyExchangeRequest;
+import net.etfbl.backend.model.SocketMessagePart;
 import net.etfbl.backend.util.Base64Util;
-import org.springframework.beans.factory.annotation.Value;
+import net.etfbl.backend.util.JwtUtil;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-import java.security.PrivateKey;
-import java.util.HashMap;
-import java.util.Map;
+import javax.crypto.SecretKey;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class MessageService {
 
-  @Value("${server.port}")
-  private int serverPort;
-
-  private final CryptoService cryptoService;
-  private final AsymmetricEncryption asymmetricEncryption;
   private final SymmetricEncryption symmetricEncryption;
 
-  private final Map<String, byte[]> userSymmetricKeyMap = new HashMap<>(); // (user,key)
-
-  public void exchangeKey(KeyExchangeRequest keyExchangeRequest, String username) {
-
-    var sessionKey = decryptSessionKey(keyExchangeRequest.getEncryptedSymmetricKeyBase64());
-    log.info("MessageService > exchangeKey() on port : " + new String(sessionKey));
-
-    var isValid = cryptoService.verifySignature(sessionKey, keyExchangeRequest.getSignatureBase64(), username);
-    if (!isValid) {
-      throw new BadRequestException("Signature not valid exception");
-    }
-
-    userSymmetricKeyMap.put(username, sessionKey); // the old value is replaced if exists
-  }
-
-  private byte[] decryptSessionKey(String encryptedSymmetricKeyBase64) {
+  public SocketMessagePart swapSenderReceiverMessageEncryption(SocketMessagePart socketMessagePart, JwtAuthenticationToken principal) {
     try {
-      PrivateKey rootPrivateKey = cryptoService.loadUserPrivateKey("rootCA");
-      var encodedByteKey = Base64Util.decode(encryptedSymmetricKeyBase64);
-      return asymmetricEncryption.decryptWithKey(encodedByteKey, rootPrivateKey);
-
-    } catch (Exception e) {
-      log.error("MessageService > decryptSessionKey() :" + "error decryption session key");
-      throw new BadRequestException(e.getMessage());
+      var messagePart = decryptSenderMessagePart(socketMessagePart.getMessagePart(), principal);
+      log.info("MessageController > decrypted part: " + new String(messagePart));
+      var encryptedMessagePart = encryptMessagePartForReceiver(messagePart, socketMessagePart.getReceiverName());
+      socketMessagePart.setMessagePart(encryptedMessagePart);
+      socketMessagePart.setSenderName((String) JwtUtil.getClaim(principal, JwtUtil.USERNAME));
+    } catch (Exception ex) {
+      log.error("MessageController > privateMessage() :" + ex.getMessage());
+      throw new BadRequestException("Error encrypting/decrypting message part");
     }
-
+    return socketMessagePart;
   }
 
+  private byte[] decryptSenderMessagePart(String encryptedBase64MessagePart, JwtAuthenticationToken principal) throws Exception {
+    byte[] encryptedMessagePart = Base64Util.decode(encryptedBase64MessagePart);
+    SecretKey symmetricKey = symmetricEncryption.generateSecretKey(KeyExchangeService.userSymmetricKeyMap.get(JwtUtil.getUsername(principal)));
+    var messagePart = symmetricEncryption.decrypt(symmetricKey, encryptedMessagePart);
+    return messagePart;
+  }
+
+  private String encryptMessagePartForReceiver(byte[] messagePart, String userReceiver) throws Exception {
+    SecretKey symmetricKey = symmetricEncryption.generateSecretKey(KeyExchangeService.userSymmetricKeyMap.get(userReceiver));
+    var encryptedMessagePart = symmetricEncryption.encrypt(symmetricKey, messagePart);
+    return Base64Util.encodeToString(encryptedMessagePart);
+  }
 }

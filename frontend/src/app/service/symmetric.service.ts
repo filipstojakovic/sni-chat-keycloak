@@ -12,9 +12,8 @@ export class SymmetricService {
   }
 
   generateSymmetricKey() {
-    // const symmetricKey:string = forge.random.getBytesSync(16).toString();
-    const symmetricKey:string = this.util.generateRandomString(16);
-    const iv = forge.random.getBytesSync(8);
+    const symmetricKey: string = forge.util.bytesToHex(forge.random.getBytesSync(16));
+    const iv = forge.util.bytesToHex(forge.random.getBytesSync(8));
     return { symmetricKey, iv };
   }
 
@@ -26,13 +25,15 @@ export class SymmetricService {
     cipher.finish();
     const encryptedMessage = cipher.output.getBytes();
 
-    return forge.util.bytesToHex(encryptedMessage);
+    return encryptedMessage;
+    // return forge.util.bytesToHex(encryptedMessage);
   }
 
   decryptMessage(encryptedMessageHex: string, key: string) {
 
+    const encryptedBuffer = this.util.base64ToString(encryptedMessageHex);
     const decipher = forge.cipher.createDecipher('AES-ECB', key);
-    const encryptedBuffer = forge.util.hexToBytes(encryptedMessageHex);
+    // const encryptedBuffer = forge.util.hexToBytes(encryptedMessageHex);
     decipher.start();
     decipher.update(forge.util.createBuffer(encryptedBuffer));
     decipher.finish();

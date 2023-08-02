@@ -12,16 +12,30 @@ public class SymmetricEncryption {
 
   public static final String AES = "AES";
 
-
-
   public SecretKey generateSecretKey(String key, String symmetricAlgo) {
     return new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), symmetricAlgo);
+  }
+
+  public SecretKey generateSecretKey(byte[] key, String symmetricAlgo) {
+    return new SecretKeySpec(key, symmetricAlgo);
+  }
+
+  public SecretKey generateSecretKey(String key) {
+    return new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), AES);
+  }
+
+  public SecretKey generateSecretKey(byte[] key) {
+    return new SecretKeySpec(key, AES);
   }
 
   public byte[] encrypt(SecretKey key, byte[] data, String symmetricAlgo) throws Exception {
     Cipher cipher = Cipher.getInstance(symmetricAlgo);
     cipher.init(Cipher.ENCRYPT_MODE, key);
     return cipher.doFinal(data);
+  }
+
+  public byte[] encrypt(SecretKey key, byte[] data) throws Exception {
+    return encrypt(key,data,AES);
   }
 
   public byte[] encrypt(String key, byte[] data, String symmetricAlgo) throws Exception {
@@ -43,6 +57,9 @@ public class SymmetricEncryption {
     Cipher cipher = Cipher.getInstance(symmetricAlgo, "BC");
     cipher.init(Cipher.DECRYPT_MODE, key);
     return cipher.doFinal(encryptedData);
+  }
+  public byte[] decrypt(SecretKey key, byte[] encryptedData) throws Exception {
+    return this.decrypt(key,encryptedData,AES);
   }
 
   public byte[] decrypt(String key, byte[] encryptedData, String symmetricAlgo) throws Exception {

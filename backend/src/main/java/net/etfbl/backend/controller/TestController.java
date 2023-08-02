@@ -43,6 +43,7 @@ public class TestController {
     return "test security from port: " + serverPort;
   }
 
+  //TODO: delete me
   @ResponseBody
   @PostMapping("api/test")
   public ResponseEntity<Void> keyExchange(@RequestBody KeyExchangeRequest keyExchangeRequest,

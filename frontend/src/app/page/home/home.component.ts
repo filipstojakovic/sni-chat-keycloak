@@ -13,6 +13,7 @@ import {UtilService} from '../../service/util.service';
 import {v4 as uuid} from 'uuid';
 import {ChatMessage} from '../../model/chatMessage';
 import * as Stomp from 'stompjs'
+import {KeyExchangeService} from '../../service/key-exchange.service';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
   constructor(private authService: AuthService,
               private asymmetric: AsymmetricService,
               private symmetric: SymmetricService,
+              private keyExchangeService: KeyExchangeService,
               private userService: UserService,
               private stompService: StompService,
               private messageService: MessageService,
@@ -51,11 +53,16 @@ export class HomeComponent implements OnInit {
     })
 
     environment.resourceServersPorts.forEach(port => {
-      this.messageService.exchangeKeysWithServer(port);
-      this.stompService.connect(port);
+      this.keyExchangeService.exchangeKeysWithServer(port);
+
       const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
+      this.stompService.connect(port);
       this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
         const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
+        const symmetricKey = this.keyExchangeService.getSessionKey(port);
+        const decryptedMessagePart = this.symmetric.decryptMessage(socketMessagePart.messagePart,symmetricKey);
+        console.log("home.component.ts > decryptedMessagePart(): "+ decryptedMessagePart);
+        socketMessagePart.messagePart = decryptedMessagePart;
         this.messageService.addMessagePart(socketMessagePart);
       });
     })
@@ -82,10 +89,19 @@ export class HomeComponent implements OnInit {
     const messageParts: string[] = this.util.divideStringRandomly(this.messageText);
 
     messageParts.forEach((currentMessagePart, index) => {
-      const serverPort = index % environment.resourceServersPorts.length;
-      const socketMessagePart = new SocketMessagePart(id, currentMessagePart, this.currentLoggedInUser, this.selectedUser.username, index, messageParts.length)
+
+      const serverPortIndex = index % environment.resourceServersPorts.length;
+      const serverPort = environment.resourceServersPorts[serverPortIndex];
+
+      const encryptBase64MessagePart = this.messageService.encryptMessagePart(serverPort,currentMessagePart);
+      const socketMessagePart = new SocketMessagePart(id,
+        encryptBase64MessagePart,
+        this.currentLoggedInUser,
+        this.selectedUser.username,
+        index,
+        messageParts.length);
       this.stompService.sendMessage(
-        environment.resourceServersPorts[serverPort],
+        serverPort,
         "/api/private-message",
         JSON.stringify(socketMessagePart));
     })

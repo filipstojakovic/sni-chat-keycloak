@@ -21,12 +21,6 @@ logging:
     root: info
 
 app:
-  rabbitmq:
-    enable: false
-    relayHost: localhost
-    relayPort: 61613
-    clientLogin: guest
-    clientPasscode: guest
   cors:
     allowedOrigins: https://localhost:4200, http://localhost:4200
 
