@@ -28,7 +28,6 @@ export class KeyExchangeService {
 
     const { symmetricKey } = this.symmetric.generateSymmetricKey();
     // const symmetricKey = "secretKey";
-    console.log("message.service.ts > exchangeKeysWithServer(): " + symmetricKey);
     const encryptedSymmetricKeyBase64 = this.asymmetric.encryptWithPublicKey(symmetricKey, rootPubKey);
     const signatureBase64 = this.asymmetric.signMessage(symmetricKey, this.auth.getUsername());
 

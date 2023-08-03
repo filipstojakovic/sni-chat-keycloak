@@ -16,20 +16,25 @@ export class AsymmetricService {
   }
 
   async loadCerts() {
+    const testCertPromise = this.http.get('assets/user_certs/test.crt', { responseType: 'text' }).toPromise();
+    const testKeyPromise = this.http.get('assets/user_certs/test.key', { responseType: 'text' }).toPromise();
     const userCertPromise = this.http.get('assets/user_certs/user.crt', { responseType: 'text' }).toPromise();
     const userKeyPromise = this.http.get('assets/user_certs/user.key', { responseType: 'text' }).toPromise();
     const user1CertPromise = this.http.get('assets/user_certs/user1.crt', { responseType: 'text' }).toPromise();
     const user1KeyPromise = this.http.get('assets/user_certs/user1.key', { responseType: 'text' }).toPromise();
     const user2CertPromise = this.http.get('assets/user_certs/user2.crt', { responseType: 'text' }).toPromise();
     const user2KeyPromise = this.http.get('assets/user_certs/user2.key', { responseType: 'text' }).toPromise();
-    const [userCert, userKey, user1Cert, user1Key, user2Cert, user2Key] = await Promise.all(
+    const [testCert, testKey, userCert, userKey, user1Cert, user1Key, user2Cert, user2Key] = await Promise.all(
       [
+        testCertPromise,
+        testKeyPromise,
         userCertPromise,
         userKeyPromise,
         user1CertPromise,
         user1KeyPromise,
         user2CertPromise,
         user2KeyPromise]);
+    this.userCertMap.set("test", new UserCert(testCert, testKey));
     this.userCertMap.set("user", new UserCert(userCert, userKey));
     this.userCertMap.set("user", new UserCert(userCert, userKey));
     this.userCertMap.set("user1", new UserCert(user1Cert, user1Key));

@@ -1,20 +1,12 @@
 version: "3"
 services:
   rabbitmq:
+    image: rabbitmq
     container_name: 'rabbitmq'
-    image: rabbitmq:3-management-alpine
     ports:
-      - "5672:5672"
-      - "15672:15672"
-    #    volumes:
-    #      - "./data/:/var/lib/rabbitmq/"
-    #      - "./log/:/var/log/rabbitmq/"
-    #    environment:
-    #      KEYCLOAK_CREATE_ADMIN_USER: true
-    #      KEYCLOAK_ADMIN_USER: admin
-    networks:
-      - rabbitmq_go_net
-
-networks:
-  rabbitmq_go_net:
-    driver: bridge
+      - "5672:5672" # default rabbitmq port
+      - "15672:15672" # UI port
+      - "61613:61613" # STOMP port
+    volumes:
+      - "./rabbit_enabled_plugins:/etc/rabbitmq/enabled_plugins"
+# stomp plugin is needed
