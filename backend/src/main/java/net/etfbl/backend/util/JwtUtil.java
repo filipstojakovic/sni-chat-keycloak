@@ -1,6 +1,6 @@
 package net.etfbl.backend.util;
 
-import net.etfbl.backend.securityconfig.KeycloakRoleConverter;
+import net.etfbl.backend.config.securityconfig.KeycloakRoleConverter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;

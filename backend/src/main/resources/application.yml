@@ -1,10 +1,28 @@
+rabbitmq:
+  queue:
+    from-name: "test2"
+    to-name: "client"
+  exchange:
+    name: "exchange-1"
+  routing:
+    key: "routingKey-1"
+
+server:
+  port: ${PORT:8080}
+  ssl:
+    enabled: false
+    key-alias: chatapp
+    key-store: classpath:certs/keystore.p12
+    key-store-type: pkcs12
+    key-store-password: password
+    key-password: password
+
 spring:
-  #  datasource:
-  #    username: root
-  #    password: root
-  #    url: jdbc:mysql://localhost/sni-chat?createDatabaseIfNotExist=true
-  jpa:
-    show-sql: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   application:
     name: "backend"
   security:
@@ -24,12 +42,3 @@ app:
   cors:
     allowedOrigins: https://localhost:4200, http://localhost:4200
 
-server:
-  port: ${PORT:8080}
-  ssl:
-    enabled: ${SSL_ENABLE:true}
-    key-alias: chatapp
-    key-store: classpath:certs/keystore.p12
-    key-store-type: pkcs12
-    key-store-password: password
-    key-password: password

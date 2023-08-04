@@ -34,3 +34,5 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+/socket-server/.env
+/socket-server/node_modules

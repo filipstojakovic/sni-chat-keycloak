@@ -1,4 +1,4 @@
-package net.etfbl.backend.websocketconfig;
+package net.etfbl.backend.config.websocketconfig;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

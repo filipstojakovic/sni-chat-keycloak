@@ -32,6 +32,9 @@
       ],
       "fs": [
         "./node_modules/fs-web"
+      ],
+      "querystring": [
+        "./node_modules/querystring-es3"
       ]
     },
     "allowSyntheticDefaultImports": true,

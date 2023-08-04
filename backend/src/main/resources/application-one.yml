@@ -1,2 +1,10 @@
 server:
   port: 8081
+rabbitmq:
+  queue:
+    from-name: "test"
+    to-name: "client"
+  exchange:
+    name: "exchange-1"
+  routing:
+    key: "routingKey-1"

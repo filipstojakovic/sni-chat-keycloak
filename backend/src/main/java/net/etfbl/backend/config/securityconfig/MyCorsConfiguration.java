@@ -1,4 +1,4 @@
-package net.etfbl.backend.securityconfig;
+package net.etfbl.backend.config.securityconfig;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

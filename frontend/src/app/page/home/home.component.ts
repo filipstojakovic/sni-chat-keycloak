@@ -12,8 +12,8 @@ import {SymmetricService} from '../../service/symmetric.service';
 import {UtilService} from '../../service/util.service';
 import {v4 as uuid} from 'uuid';
 import {ChatMessage} from '../../model/chatMessage';
-import * as Stomp from 'stompjs'
 import {KeyExchangeService} from '../../service/key-exchange.service';
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-home',
@@ -38,31 +38,54 @@ export class HomeComponent implements OnInit {
               private messageService: MessageService,
               private stege: StegeService,
               private util: UtilService,
+              private http: HttpClient
   ) {
   }
 
   async ngOnInit() {
-    await this.asymmetric.loadCerts(); //TODO: load just root cert
 
-    this.userService.getAllUsers().subscribe(users => {
-      this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
-    });
 
-    this.messageService.newMessageEmitter.subscribe((chatMessage) => {
-      this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username)
-    })
+    const socket = new WebSocket(`ws://localhost:3000/ws?token=${this.authService.getToken()}`);
+    socket.onmessage = function (event) {
+      // const messageContainer = document.getElementById("message-container");
+      const message = JSON.parse(event.data);
+      console.log("home.component.ts > onmessage(): "+ JSON.stringify(message));
+      // messageContainer.innerHTML += `<p>${message.from}: ${message.content}</p>`;
+    };
 
-    environment.resourceServersPorts.forEach(port => {
-      this.keyExchangeService.exchangeKeysWithServer(port);
+    socket.onopen = () =>{
+      socket.send(JSON.stringify({a:"jebi se"}));
+    }
 
-      const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-      this.stompService.connect(port);
-      this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
-        const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
-        this.messageService.decryptMessagePart(socketMessagePart,port);
-        this.messageService.addMessagePart(socketMessagePart);
-      });
-    })
+
+
+
+
+
+    //WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+
+
+    // await this.asymmetric.loadCerts(); //TODO: load just root cert
+    //
+    // this.userService.getAllUsers().subscribe(users => {
+    //   this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
+    // });
+    //
+    // this.messageService.newMessageEmitter.subscribe((chatMessage) => {
+    //   this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username)
+    // })
+    //
+    // environment.resourceServersPorts.forEach(port => {
+    //   this.keyExchangeService.exchangeKeysWithServer(port);
+    //
+    //   const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
+    //   this.stompService.connect(port);
+    //   this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
+    //     const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
+    //     this.messageService.decryptMessagePart(socketMessagePart,port);
+    //     this.messageService.addMessagePart(socketMessagePart);
+    //   });
+    // })
   }
 
   onUserSelectionChange(event: any) {
@@ -90,7 +113,7 @@ export class HomeComponent implements OnInit {
       const serverPortIndex = index % environment.resourceServersPorts.length;
       const serverPort = environment.resourceServersPorts[serverPortIndex];
 
-      const encryptBase64MessagePart = this.messageService.encryptMessagePart(serverPort,currentMessagePart);
+      const encryptBase64MessagePart = this.messageService.encryptMessagePart(serverPort, currentMessagePart);
       const socketMessagePart = new SocketMessagePart(id,
         encryptBase64MessagePart,
         this.currentLoggedInUser,

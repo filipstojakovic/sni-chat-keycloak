@@ -17,6 +17,7 @@ import {UtilService} from './service/util.service';
 import {StegeService} from './service/stege.service';
 import {SymmetricService} from './service/symmetric.service';
 import {AsymmetricService} from './service/asymmetric.service';
+import {CookieService} from "ngx-cookie-service";
 
 @NgModule({
   declarations: [
@@ -41,6 +42,7 @@ import {AsymmetricService} from './service/asymmetric.service';
       multi: true,
       deps: [KeycloakService],
     },
+    CookieService,
     StompService,
     UserService,
     MessageService,

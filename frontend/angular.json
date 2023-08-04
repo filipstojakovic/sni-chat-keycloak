@@ -18,7 +18,8 @@
               "js-sha256",
               "sockjs-client",
               "stompjs",
-              "node-forge"
+              "node-forge",
+              "querystring-es3"
             ],
             "outputPath": "dist/frontend",
             "index": "src/index.html",

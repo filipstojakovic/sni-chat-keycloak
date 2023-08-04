@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {KeycloakAuthGuard, KeycloakService} from 'keycloak-angular';
+import {CookieService} from "ngx-cookie-service";
 
 
 @Injectable({
@@ -13,7 +14,9 @@ export class AuthGuard extends KeycloakAuthGuard {
    */
   constructor(
     protected override readonly router: Router,
-    private readonly keycloak: KeycloakService) {
+    private readonly keycloak: KeycloakService,
+    private cookieService: CookieService
+    ) {
     super(router, keycloak);
   }
 
@@ -28,6 +31,7 @@ export class AuthGuard extends KeycloakAuthGuard {
         redirectUri: window.location.origin + state.url,
       });
     }
+    this.cookieService.set("cao","cao cao");
 
     if (this.keycloak.isTokenExpired()) { // TODO: delete me
       console.error("auth.guard.ts > isAccessAllowed(): " + "TOKEN EXPIRED");

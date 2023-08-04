@@ -1,4 +1,4 @@
-package net.etfbl.backend.securityconfig;
+package net.etfbl.backend.config.securityconfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
