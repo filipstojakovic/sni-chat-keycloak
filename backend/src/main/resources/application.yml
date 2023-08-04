@@ -10,7 +10,7 @@ rabbitmq:
 server:
   port: ${PORT:8080}
   ssl:
-    enabled: false
+    enabled: true
     key-alias: chatapp
     key-store: classpath:certs/keystore.p12
     key-store-type: pkcs12

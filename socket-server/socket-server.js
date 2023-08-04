@@ -2,13 +2,23 @@ const WebSocket = require('ws');
 const amqp = require('amqplib');
 const jwt = require('jsonwebtoken');
 const {getKeycloakKey} = require("./keycloak-key");
+const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
-const wss = new WebSocket.Server({port: 3000});
-console.log('WebSocket server listening on port 3000');
+const privateKey = fs.readFileSync(path.join(__dirname, 'certs/socket.key'), 'utf8');
+const publicCertificate = fs.readFileSync(path.join(__dirname, 'certs/socket.crt'), 'utf8');
+const credentials = { key: privateKey, cert: publicCertificate };
+const port = 3000; // or any other desired port number
+const httpsServer = https.createServer(credentials);
+const wss = new WebSocket.Server({ server: httpsServer });
+httpsServer.listen(port, () => {
+  console.log(`WebSocket server running on port ${port}`);
+});
 
 wss.on('connection', (socket, req) => {
 
-  const url = new URL(`https://localhost${req.url}`); // Use your actual server URL here
+  const url = new URL(`https://localhost${req.url}`);
   const token = url.searchParams.get('token');
 
   if (!token) throw new Error('Token is missing');
@@ -17,7 +27,7 @@ wss.on('connection', (socket, req) => {
       throw new Error("token not valid")
     }
     console.log("socket-server.js > token is valid");
-    socket.on('message', (message) => {
+    socket.on('message', (message) => {   //SENDING MESSAGE
 
       // You can modify the message or add additional fields if needed
       // Send the message to RabbitMQ for further processing and broadcasting
@@ -33,7 +43,7 @@ async function sendToRabbitMQ(message) {
 
   await channel.assertQueue(queueName);
   console.log('sending something');
-  channel.sendToQueue(queueName, Buffer.from(JSON.stringify(message)));
+  channel.sendToQueue(queueName, Buffer.from(message));
 }
 
 async function receiveFromRabbitMQ() {

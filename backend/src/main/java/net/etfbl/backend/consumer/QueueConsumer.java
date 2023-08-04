@@ -24,7 +24,7 @@ public class QueueConsumer {
     System.out.println("Prvi queue " + dummy);
 
     rabbitTemplate.convertAndSend(exchange, routingKey, dummy);
-    rabbitTemplate.convertAndSend("client",dummy);
+    rabbitTemplate.convertAndSend("client", dummy);
   }
 
   @RabbitListener(queues = { "${rabbitmq.queue.to-name}" })

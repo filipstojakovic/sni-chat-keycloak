@@ -38,28 +38,26 @@ export class HomeComponent implements OnInit {
               private messageService: MessageService,
               private stege: StegeService,
               private util: UtilService,
-              private http: HttpClient
+              private http: HttpClient,
   ) {
   }
 
   async ngOnInit() {
 
 
-    const socket = new WebSocket(`ws://localhost:3000/ws?token=${this.authService.getToken()}`);
+    const socket = new WebSocket(`wss://localhost:3000/ws?token=${this.authService.getToken()}`);
     socket.onmessage = function (event) {
       // const messageContainer = document.getElementById("message-container");
       const message = JSON.parse(event.data);
-      console.log("home.component.ts > onmessage(): "+ JSON.stringify(message));
+      console.log("home.component.ts > onmessage(): " + JSON.stringify(message));
       // messageContainer.innerHTML += `<p>${message.from}: ${message.content}</p>`;
     };
 
-    socket.onopen = () =>{
-      socket.send(JSON.stringify({a:"jebi se"}));
+    const object = {a: "message from angular"};
+
+    socket.onopen = () => {
+      socket.send(JSON.stringify(object));
     }
-
-
-
-
 
 
     //WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
