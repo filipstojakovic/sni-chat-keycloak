@@ -1,19 +1,7 @@
 const WebSocket = require('ws');
 const amqp = require('amqplib');
 const jwt = require('jsonwebtoken');
-const jwksClient = require('jwks-rsa');
-require('dotenv').config();
-
-const client = jwksClient({
-  jwksUri: process.env.JWKS_URI
-});
-
-function getKeycloakKey(header, callback){
-  client.getSigningKey(header.kid, function(err, key) {
-    const signingKey = key.publicKey || key.rsaPublicKey;
-    callback(null, signingKey);
-  });
-}
+const {getKeycloakKey} = require("./keycloak-key");
 
 const wss = new WebSocket.Server({port: 3000});
 console.log('WebSocket server listening on port 3000');
@@ -24,11 +12,11 @@ wss.on('connection', (socket, req) => {
   const token = url.searchParams.get('token');
 
   if (!token) throw new Error('Token is missing');
-  jwt.verify(token, getKeycloakKey, null, function(err, decoded) {
-    console.log("socket-server.js > (): "+ "is valid");
-    if(err){
+  jwt.verify(token, getKeycloakKey, null, function (err, decoded) {
+    if (err) {
       throw new Error("token not valid")
     }
+    console.log("socket-server.js > token is valid");
     socket.on('message', (message) => {
 
       // You can modify the message or add additional fields if needed
@@ -36,7 +24,6 @@ wss.on('connection', (socket, req) => {
       sendToRabbitMQ(message).catch(console.error);
     });
   });
-
 });
 
 async function sendToRabbitMQ(message) {
