@@ -1,7 +1,6 @@
 rabbitmq:
   queue:
-    from-name: "test2"
-    to-name: "client"
+    name: "queue8080" # TODO: try to combine with port variable
   exchange:
     name: "exchange-1"
   routing:

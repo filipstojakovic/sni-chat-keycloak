@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../../auth/auth.service';
 import {UserService} from '../../service/user.service';
 import {User} from '../../model/user';
-import {StompService} from '../../stomp.service';
+import {SocketService} from '../../socket.service';
 import {SocketMessagePart} from '../../model/socketMessagePart';
 import {MessageService} from '../../service/message.service';
 import {environment} from '../../../environments/environment.development';
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
               private symmetric: SymmetricService,
               private keyExchangeService: KeyExchangeService,
               private userService: UserService,
-              private stompService: StompService,
+              private socketService: SocketService,
               private messageService: MessageService,
               private stege: StegeService,
               private util: UtilService,
@@ -44,19 +44,26 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
 
+    const exampleObject = {
+      id: "id",
+      senderName: this.authService.getUsername(),
+      receiverName: this.authService.getUsername() == "user" ? "test" : "user",
+      messagePart: "part",
+      partNumber: 3,
+      totalParts: 9,
+    };
 
     const socket = new WebSocket(`wss://localhost:3000/ws?token=${this.authService.getToken()}`);
     socket.onmessage = function (event) {
       // const messageContainer = document.getElementById("message-container");
       const message = JSON.parse(event.data);
-      console.log("home.component.ts > onmessage(): " + JSON.stringify(message));
+      console.log("home.component.ts > received(): " + JSON.stringify(message));
       // messageContainer.innerHTML += `<p>${message.from}: ${message.content}</p>`;
     };
 
-    const object = {a: "message from angular"};
-
     socket.onopen = () => {
-      socket.send(JSON.stringify(object));
+      console.log("home.component.ts > onopen(): "+ "socket open");
+      socket.send(JSON.stringify(exampleObject));
     }
 
 
@@ -77,8 +84,8 @@ export class HomeComponent implements OnInit {
     //   this.keyExchangeService.exchangeKeysWithServer(port);
     //
     //   const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-    //   this.stompService.connect(port);
-    //   this.stompService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
+    //   this.socketService.connect(port);
+    //   this.socketService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
     //     const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
     //     this.messageService.decryptMessagePart(socketMessagePart,port);
     //     this.messageService.addMessagePart(socketMessagePart);
@@ -118,7 +125,7 @@ export class HomeComponent implements OnInit {
         this.selectedUser.username,
         index,
         messageParts.length);
-      this.stompService.sendMessage(
+      this.socketService.sendMessage(
         serverPort,
         "/api/private-message",
         JSON.stringify(socketMessagePart));

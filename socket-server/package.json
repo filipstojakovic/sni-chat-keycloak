@@ -1,17 +1,19 @@
 {
-	"scripts": {
-		"start": "npx nodemon socket-server.js"
-	},
-	"dependencies": {
-		"amqplib": "^0.10.3",
-		"dotenv": "^16.3.1",
-		"jsonwebtoken": "^9.0.1",
-		"jwks-rsa": "^3.0.1",
-		"websocket": "^1.0.34",
-		"ws": "^8.13.0"
-	},
-	"devDependencies": {
-		"nodemon": "^3.0.1",
-		"ts-node": "^10.9.1"
-	}
+  "name": "socket-server",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx nodemon src/socket-server.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.1",
+    "jwks-rsa": "^3.0.1",
+    "websocket": "^1.0.34",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1"
+  }
 }

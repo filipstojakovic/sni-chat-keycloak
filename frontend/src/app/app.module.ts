@@ -8,7 +8,7 @@ import {HomeComponent} from './page/home/home.component';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {StompService} from './stomp.service';
+import {SocketService} from './socket.service';
 import {UserService} from './service/user.service';
 import {MaterialModule} from '../material.module';
 import {ToolbarComponent} from './component/toolbar/toolbar.component';
@@ -43,7 +43,7 @@ import {CookieService} from "ngx-cookie-service";
       deps: [KeycloakService],
     },
     CookieService,
-    StompService,
+    SocketService,
     UserService,
     MessageService,
     UtilService,

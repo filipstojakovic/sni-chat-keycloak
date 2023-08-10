@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.etfbl.backend.exception.BadRequestException;
 import net.etfbl.backend.model.SocketMessagePart;
 import net.etfbl.backend.util.Base64Util;
-import net.etfbl.backend.util.JwtUtil;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -18,13 +16,12 @@ public class MessageService {
 
   private final SymmetricEncryption symmetricEncryption;
 
-  public SocketMessagePart swapSenderReceiverMessageEncryption(SocketMessagePart socketMessagePart, JwtAuthenticationToken principal) {
+  public SocketMessagePart swapSenderReceiverMessageEncryption(SocketMessagePart socketMessagePart) {
     try {
-      var messagePart = decryptSenderMessagePart(socketMessagePart.getMessagePart(), principal);
+      var messagePart = decryptSenderMessagePart(socketMessagePart.getMessagePart(), socketMessagePart.getSenderName());
       log.info("MessageController > decrypted part: " + new String(messagePart));
       var encryptedMessagePart = encryptMessagePartForReceiver(messagePart, socketMessagePart.getReceiverName());
       socketMessagePart.setMessagePart(encryptedMessagePart);
-      socketMessagePart.setSenderName((String) JwtUtil.getClaim(principal, JwtUtil.USERNAME));
     } catch (Exception ex) {
       log.error("MessageController > privateMessage() :" + ex.getMessage());
       throw new BadRequestException("Error encrypting/decrypting message part");
@@ -32,9 +29,9 @@ public class MessageService {
     return socketMessagePart;
   }
 
-  private byte[] decryptSenderMessagePart(String encryptedBase64MessagePart, JwtAuthenticationToken principal) throws Exception {
+  private byte[] decryptSenderMessagePart(String encryptedBase64MessagePart, String username) throws Exception {
     byte[] encryptedMessagePart = Base64Util.decode(encryptedBase64MessagePart);
-    SecretKey symmetricKey = symmetricEncryption.generateSecretKey(KeyExchangeService.userSymmetricKeyMap.get(JwtUtil.getUsername(principal)));
+    SecretKey symmetricKey = symmetricEncryption.generateSecretKey(KeyExchangeService.userSymmetricKeyMap.get(username));
     var messagePart = symmetricEncryption.decrypt(symmetricKey, encryptedMessagePart);
     return messagePart;
   }
