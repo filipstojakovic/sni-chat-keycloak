@@ -31,6 +31,7 @@ public class MessageService {
 
   private byte[] decryptSenderMessagePart(String encryptedBase64MessagePart, String username) throws Exception {
     byte[] encryptedMessagePart = Base64Util.decode(encryptedBase64MessagePart);
+    //TODO: if userSymmetricKey does not exist
     SecretKey symmetricKey = symmetricEncryption.generateSecretKey(KeyExchangeService.userSymmetricKeyMap.get(username));
     var messagePart = symmetricEncryption.decrypt(symmetricKey, encryptedMessagePart);
     return messagePart;

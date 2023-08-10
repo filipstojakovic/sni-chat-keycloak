@@ -16,7 +16,7 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
 
   @Value("${server.port}")
-  private int serverPort;
+  private long serverPort;
 
   private final MessageService messageService;
   private final RabbitTemplate rabbitTemplate;
@@ -30,7 +30,8 @@ public class MessageController {
       receiver: {}
       port: {}""", socketMessagePart.getSenderName(), socketMessagePart.getReceiverName(), serverPort);
 
-//     socketMessagePart = messageService.swapSenderReceiverMessageEncryption(socketMessagePart); //TODO: uncomment me
+    socketMessagePart = messageService.swapSenderReceiverMessageEncryption(socketMessagePart); // TODO: uncomment me
+    socketMessagePart.setPort(serverPort);
 
     rabbitTemplate.convertAndSend(socketMessagePart.getReceiverName(), socketMessagePart);
   }

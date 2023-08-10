@@ -44,53 +44,28 @@ export class HomeComponent implements OnInit {
 
   async ngOnInit() {
 
-    const exampleObject = {
-      id: "id",
-      senderName: this.authService.getUsername(),
-      receiverName: this.authService.getUsername() == "user" ? "test" : "user",
-      messagePart: "part",
-      partNumber: 3,
-      totalParts: 9,
-    };
+    await this.asymmetric.loadCerts();
+    environment.resourceServersPorts.forEach(async (port) => await this.keyExchangeService.exchangeKeysWithServer(port))
 
-    const socket = new WebSocket(`wss://localhost:3000/ws?token=${this.authService.getToken()}`);
-    socket.onmessage = function (event) {
-      // const messageContainer = document.getElementById("message-container");
-      const message = JSON.parse(event.data);
-      console.log("home.component.ts > received(): " + JSON.stringify(message));
-      // messageContainer.innerHTML += `<p>${message.from}: ${message.content}</p>`;
-    };
+    this.userService.getAllUsers().subscribe(users => {
+      this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
+    });
 
-    socket.onopen = () => {
-      console.log("home.component.ts > onopen(): "+ "socket open");
-      socket.send(JSON.stringify(exampleObject));
-    }
+    this.messageService.newMessageEmitter.subscribe((chatMessage) => {
+      this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username)
+    })
+    this.socketService.connect().subscribe({
+        next: (stompSocketMessagePart) => {
+          const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart);
+          this.messageService.decryptMessagePart(socketMessagePart, socketMessagePart.port);
+          this.messageService.addMessagePart(socketMessagePart);
+        },
+        error: (err) => {
+          console.error(err.message);
+        },
+      },
+    )
 
-
-    //WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-
-
-    // await this.asymmetric.loadCerts(); //TODO: load just root cert
-    //
-    // this.userService.getAllUsers().subscribe(users => {
-    //   this.availableUsers = users.filter(user => user.username != this.authService.getUsername());
-    // });
-    //
-    // this.messageService.newMessageEmitter.subscribe((chatMessage) => {
-    //   this.currentUserMessages = this.messageService.findUserMessages(this.selectedUser.username)
-    // })
-    //
-    // environment.resourceServersPorts.forEach(port => {
-    //   this.keyExchangeService.exchangeKeysWithServer(port);
-    //
-    //   const userMessagesUrl = `/user/${this.authService.getUsername()}/private`
-    //   this.socketService.connect(port);
-    //   this.socketService.subscribe(port, userMessagesUrl, (stompSocketMessagePart: Stomp.Message) => {
-    //     const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart.body);
-    //     this.messageService.decryptMessagePart(socketMessagePart,port);
-    //     this.messageService.addMessagePart(socketMessagePart);
-    //   });
-    // })
   }
 
   onUserSelectionChange(event: any) {
@@ -100,6 +75,7 @@ export class HomeComponent implements OnInit {
   }
 
   sendMessage(event: any) {
+    console.log("home.component.ts > sendMessage(): " + "enter");
     event.preventDefault();
     if (this.messageText.trim() === '') {
       return;
@@ -127,7 +103,6 @@ export class HomeComponent implements OnInit {
         messageParts.length);
       this.socketService.sendMessage(
         serverPort,
-        "/api/private-message",
         JSON.stringify(socketMessagePart));
     })
 

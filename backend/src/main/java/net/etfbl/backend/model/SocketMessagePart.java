@@ -16,5 +16,6 @@ public class SocketMessagePart {
 
   private Long partNumber;
   private Long totalParts;
+  private Long port;
 
 }

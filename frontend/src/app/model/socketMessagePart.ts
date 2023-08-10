@@ -7,6 +7,7 @@ export class SocketMessagePart {
 
   partNumber: number;
   totalParts: number;
+  port: number;
 
 
   constructor(id: string, messagePart: string, senderUsername: string, receiverUsername: string, partNumber: number, totalParts: number) {

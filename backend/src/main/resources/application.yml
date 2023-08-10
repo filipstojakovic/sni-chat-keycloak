@@ -1,10 +1,6 @@
 rabbitmq:
   queue:
-    name: "queue8080" # TODO: try to combine with port variable
-  exchange:
-    name: "exchange-1"
-  routing:
-    key: "routingKey-1"
+    name: queue${server.port}
 
 server:
   port: ${PORT:8080}

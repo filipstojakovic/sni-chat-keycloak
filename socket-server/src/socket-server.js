@@ -44,7 +44,8 @@ wss.on('connection', (socket, req) => {
 
 // ---------------- SEND MESSAGE ----------------
 async function sendToRabbitMQ(message) {
-  const queueName = 'queue8080';
+  const chatMessage = JSON.parse(message);
+  const queueName = 'queue' + chatMessage.port;
   console.log("socket-server.js > sendToRabbitMQ(): "+ "trying");
   await rabbitChannel.assertQueue(queueName);
   console.log('sending something to queue: ' + queueName);
