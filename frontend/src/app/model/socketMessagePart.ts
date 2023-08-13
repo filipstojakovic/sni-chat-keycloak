@@ -5,12 +5,11 @@ export class SocketMessagePart {
   receiverName: string = "";
   messagePart: string = "";
 
-  partNumber: number;
+  partNumber: any;
   totalParts: number;
   port: number;
 
-
-  constructor(id: string, messagePart: string, senderUsername: string, receiverUsername: string, partNumber: number, totalParts: number) {
+  constructor(id: string, messagePart: string, senderUsername: string, receiverUsername: string, partNumber: any, totalParts: number) {
     this.id = id;
     this.messagePart = messagePart;
     this.senderName = senderUsername;

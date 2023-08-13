@@ -8,12 +8,10 @@ import {MessageService} from '../../service/message.service';
 import {environment} from '../../../environments/environment.development';
 import {StegeService} from '../../service/stege.service';
 import {AsymmetricService} from '../../service/asymmetric.service';
-import {SymmetricService} from '../../service/symmetric.service';
 import {UtilService} from '../../service/util.service';
 import {v4 as uuid} from 'uuid';
 import {ChatMessage} from '../../model/chatMessage';
 import {KeyExchangeService} from '../../service/key-exchange.service';
-import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-home',
@@ -31,14 +29,12 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private asymmetric: AsymmetricService,
-              private symmetric: SymmetricService,
               private keyExchangeService: KeyExchangeService,
               private userService: UserService,
               private socketService: SocketService,
               private messageService: MessageService,
               private stege: StegeService,
               private util: UtilService,
-              private http: HttpClient,
   ) {
   }
 
@@ -57,6 +53,7 @@ export class HomeComponent implements OnInit {
     this.socketService.connect().subscribe({
         next: (stompSocketMessagePart) => {
           const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart);
+          socketMessagePart.partNumber = this.stege.decryptMessage(socketMessagePart.partNumber);
           this.messageService.decryptMessagePart(socketMessagePart, socketMessagePart.port);
           this.messageService.addMessagePart(socketMessagePart);
         },
@@ -89,17 +86,18 @@ export class HomeComponent implements OnInit {
 
     const messageParts: string[] = this.util.divideStringRandomly(this.messageText);
 
-    messageParts.forEach((currentMessagePart, index) => {
+    messageParts.forEach(async (currentMessagePart, index) => {
 
       const serverPortIndex = index % environment.resourceServersPorts.length;
       const serverPort = environment.resourceServersPorts[serverPortIndex];
 
       const encryptBase64MessagePart = this.messageService.encryptMessagePart(serverPort, currentMessagePart);
+      const stegeIndex = await this.stege.encryptMessage(index + "");
       const socketMessagePart = new SocketMessagePart(id,
         encryptBase64MessagePart,
         this.currentLoggedInUser,
         this.selectedUser.username,
-        index,
+        stegeIndex,
         messageParts.length);
       this.socketService.sendMessage(
         serverPort,

@@ -30,7 +30,7 @@ public class MessageController {
       receiver: {}
       port: {}""", socketMessagePart.getSenderName(), socketMessagePart.getReceiverName(), serverPort);
 
-    socketMessagePart = messageService.swapSenderReceiverMessageEncryption(socketMessagePart); // TODO: uncomment me
+    socketMessagePart = messageService.swapSenderReceiverMessageEncryption(socketMessagePart);
     socketMessagePart.setPort(serverPort);
 
     rabbitTemplate.convertAndSend(socketMessagePart.getReceiverName(), socketMessagePart);

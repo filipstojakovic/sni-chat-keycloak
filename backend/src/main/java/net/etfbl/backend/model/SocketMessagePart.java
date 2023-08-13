@@ -14,7 +14,7 @@ public class SocketMessagePart {
   private String receiverName;
   private String messagePart;
 
-  private Long partNumber;
+  private String partNumber;
   private Long totalParts;
   private Long port;
 

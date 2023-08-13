@@ -7,7 +7,7 @@ const {httpsServer} = require('./init');
 const port = process.env.PORT;
 
 const wss = new WebSocket.Server({server: httpsServer});
-var rabbitChannel = null;
+let rabbitChannel = null;
 
 httpsServer.listen(port, async () => {
   console.log(`WebSocket server running on port ${port}`);
@@ -16,9 +16,6 @@ httpsServer.listen(port, async () => {
 });
 
 wss.on('connection', (socket, req) => {
-
-  const keys = JSON.parse(process.env.ROUTE_KEYS);
-  console.log("socket-server.js > keys(): " + keys);
 
   const url = new URL(`${req.headers.host}${req.url}`);
   const tokenStr = url.searchParams.get('token');
@@ -46,9 +43,8 @@ wss.on('connection', (socket, req) => {
 async function sendToRabbitMQ(message) {
   const chatMessage = JSON.parse(message);
   const queueName = 'queue' + chatMessage.port;
-  console.log("socket-server.js > sendToRabbitMQ(): "+ "trying");
   await rabbitChannel.assertQueue(queueName);
-  console.log('sending something to queue: ' + queueName);
+  console.log('sending to queue: ' + queueName);
   rabbitChannel.sendToQueue(queueName, Buffer.from(message));
 }
 
@@ -58,7 +54,7 @@ async function receiveFromRabbitMQ(queueName) {
   await rabbitChannel.assertQueue(queueName);
   rabbitChannel.consume(queueName, (message) => {
       const content = message.content.toString();
-      console.log(`socket-server.js > receiveFromRabbitMQ(): queue: ${queueName}:\n content: ` + content);
+    console.log('receiving from queue: ' + queueName);
 
       wss.clients.forEach((client) => {
         if (client.username === queueName) {
