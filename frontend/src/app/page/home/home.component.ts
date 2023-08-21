@@ -53,7 +53,11 @@ export class HomeComponent implements OnInit {
     this.socketService.connect().subscribe({
         next: (stompSocketMessagePart) => {
           const socketMessagePart: SocketMessagePart = JSON.parse(stompSocketMessagePart);
-          socketMessagePart.partNumber = this.stege.decryptMessage(socketMessagePart.partNumber);
+          if (socketMessagePart.port === environment.resourceServersPorts[0]) {
+            socketMessagePart.partNumber = this.stege.decryptMessage(socketMessagePart.partNumber);
+          } else {
+            socketMessagePart.partNumber = this.util.base64ToString(socketMessagePart.partNumber)
+          }
           this.messageService.decryptMessagePart(socketMessagePart, socketMessagePart.port);
           this.messageService.addMessagePart(socketMessagePart);
         },
@@ -92,8 +96,14 @@ export class HomeComponent implements OnInit {
       const serverPort = environment.resourceServersPorts[serverPortIndex];
 
       const encryptBase64MessagePart = this.messageService.encryptMessagePart(serverPort, currentMessagePart);
-      const stegeIndex = await this.stege.encryptMessage(index + "");
-      const socketMessagePart = new SocketMessagePart(id,
+      let stegeIndex: string;
+      if (serverPort === environment.resourceServersPorts[0]) {
+        stegeIndex = await this.stege.encryptMessage(index + "");
+      } else {
+        stegeIndex = this.util.stringToBase64(index + "");
+      }
+      const socketMessagePart = new SocketMessagePart(
+        id,
         encryptBase64MessagePart,
         this.currentLoggedInUser,
         this.selectedUser.username,

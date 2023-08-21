@@ -8,7 +8,7 @@ export const environment = {
   authServerPort: 9000,
   resourceServersPorts: [
     8080,
-    // 8081,
+    8081,
     // 8082,
     // 8083,
   ],
