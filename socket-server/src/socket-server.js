@@ -31,9 +31,7 @@ wss.on('connection', (socket, req) => {
     receiveFromRabbitMQ(username).catch(console.error);
 
     socket.on('message', (message) => {   //SENDING MESSAGE
-      console.log("socket-server.js > sendToRabbitMQ(): " + message);
-      // You can modify the message or add additional fields if needed
-      // Send the message to RabbitMQ for further processing and broadcasting
+      // console.log("socket-server.js > sendToRabbitMQ(): " + message);
       sendToRabbitMQ(message).catch(console.error);
     });
   });

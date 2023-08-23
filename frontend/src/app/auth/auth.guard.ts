@@ -31,11 +31,7 @@ export class AuthGuard extends KeycloakAuthGuard {
         redirectUri: window.location.origin + state.url,
       });
     }
-    this.cookieService.set("cao","cao cao");
-
-    if (this.keycloak.isTokenExpired()) { // TODO: delete me
-      console.error("auth.guard.ts > isAccessAllowed(): " + "TOKEN EXPIRED");
-    }
+    this.cookieService.set("test-cookie","test value");
 
     const requiredRoles = route.data['role']; // data send through Route in RouterModule, =>  data: { role: [RoleEnum.admin, RoleEnum.user] }
 

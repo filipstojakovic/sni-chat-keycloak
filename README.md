@@ -1,1 +1,0 @@
-# ćao Njegoše, ćao Vanja :-*
